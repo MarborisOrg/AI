@@ -10,38 +10,38 @@ var ReasonKeywords = map[string]ReasonKeyword{
 		That: "that",
 		To:   "to",
 	},
-	"de": {
-		That: "das",
-		To:   "zu",
-	},
-	"fr": {
-		That: "que",
-		To:   "de",
-	},
-	"es": {
-		That: "que",
-		To:   "para",
-	},
-	"ca": {
-		That: "que",
-		To:   "a",
-	},
-	"it": {
-		That: "quel",
-		To:   "per",
-	},
-	"tr": {
-		That: "için",
-		To:   "sebebiyle",
-	},
-	"nl": {
-		That: "dat",
-		To:   "naar",
-	},
-	"el": {
-		That: "το οποίο",
-		To:   "στο",
-	},
+	// "de": {
+	// 	That: "das",
+	// 	To:   "zu",
+	// },
+	// "fr": {
+	// 	That: "que",
+	// 	To:   "de",
+	// },
+	// "es": {
+	// 	That: "que",
+	// 	To:   "para",
+	// },
+	// "ca": {
+	// 	That: "que",
+	// 	To:   "a",
+	// },
+	// "it": {
+	// 	That: "quel",
+	// 	To:   "per",
+	// },
+	// "tr": {
+	// 	That: "için",
+	// 	To:   "sebebiyle",
+	// },
+	// "nl": {
+	// 	That: "dat",
+	// 	To:   "naar",
+	// },
+	// "el": {
+	// 	That: "το οποίο",
+	// 	To:   "στο",
+	// },
 }
 
 // ReasonKeyword are used to find reason for different languages

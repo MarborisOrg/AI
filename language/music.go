@@ -11,46 +11,46 @@ var SpotifyKeyword = map[string]SpotifyKeywords{
 		From: "from",
 		On:   "on",
 	},
-	"de": {
-		Play: "spiele",
-		From: "von",
-		On:   "auf",
-	},
-	"fr": {
-		Play: "joue",
-		From: "de",
-		On:   "sur",
-	},
-	"es": {
-		Play: "Juega",
-		From: "de",
-		On:   "en",
-	},
-	"ca": {
-		Play: "Juga",
-		From: "de",
-		On:   "a",
-	},
-	"it": {
-		Play: "suona",
-		From: "da",
-		On:   "a",
-	},
-	"tr": {
-		Play: "Başlat",
-		From: "dan",
-		On:   "kadar",
-	},
-	"nl": {
-		Play: "speel",
-		From: "van",
-		On:   "op",
-	},
-	"el": {
-		Play: "αναπαραγωγή",
-		From: "από",
-		On:   "στο",
-	},
+	// "de": {
+	// 	Play: "spiele",
+	// 	From: "von",
+	// 	On:   "auf",
+	// },
+	// "fr": {
+	// 	Play: "joue",
+	// 	From: "de",
+	// 	On:   "sur",
+	// },
+	// "es": {
+	// 	Play: "Juega",
+	// 	From: "de",
+	// 	On:   "en",
+	// },
+	// "ca": {
+	// 	Play: "Juga",
+	// 	From: "de",
+	// 	On:   "a",
+	// },
+	// "it": {
+	// 	Play: "suona",
+	// 	From: "da",
+	// 	On:   "a",
+	// },
+	// "tr": {
+	// 	Play: "Başlat",
+	// 	From: "dan",
+	// 	On:   "kadar",
+	// },
+	// "nl": {
+	// 	Play: "speel",
+	// 	From: "van",
+	// 	On:   "op",
+	// },
+	// "el": {
+	// 	Play: "αναπαραγωγή",
+	// 	From: "από",
+	// 	On:   "στο",
+	// },
 }
 
 // SpotifyKeywords are the keywords used to get music name

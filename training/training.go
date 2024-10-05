@@ -2,7 +2,7 @@ package training
 
 import (
 	"fmt"
-	"os"
+	// "os"
 
 	"marboris/core/analysis"
 	"marboris/core/network"
@@ -36,9 +36,9 @@ func CreateNeuralNetwork(locale string, ignoreTrainingFile bool) (neuralNetwork 
 	// Decide if the network is created by the save or is a new one
 	saveFile := "res/locales/" + locale + "/training.json"
 
-	_, err := os.Open(saveFile)
+	// _, err := os.Open(saveFile)
 	// Train the model if there is no training file
-	if err != nil || ignoreTrainingFile {
+	if true { // err != nil || ignoreTrainingFile
 		inputs, outputs := TrainData(locale)
 
 		neuralNetwork = network.CreateNetwork(locale, 0.1, inputs, outputs, 50)
