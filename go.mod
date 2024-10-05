@@ -3,10 +3,7 @@ module marboris/core
 go 1.12
 
 require (
-	cloud.google.com/go v0.34.0 // indirect
-	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	github.com/fatih/color v1.9.0 // indirect
-	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/gookit/color v1.5.4
 	github.com/gorilla/mux v1.8.1
 	github.com/gorilla/websocket v1.5.3
@@ -18,7 +15,5 @@ require (
 	github.com/tebeka/snowball v0.7.0
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	golang.org/x/crypto v0.28.0
-	golang.org/x/net v0.30.0 // indirect
-	google.golang.org/appengine v1.6.8 // indirect
 	gopkg.in/cheggaaa/pb.v1 v1.0.28
 )
