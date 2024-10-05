@@ -19,3 +19,6 @@ vendor
 coverage.txt
 
 res/authentication.txt
+
+res/locales/en/training.json
+training.json~
