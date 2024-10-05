@@ -1,0 +1,4 @@
+Test
+
++ g++ m.cpp -o main-cpp
++ go build ./main.go OR go run ./main.go
