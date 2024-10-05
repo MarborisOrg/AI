@@ -1,0 +1,120 @@
+[
+  {
+    "tag": "don't understand",
+    "messages": [
+      "Ich versuche mein Bestes zu geben, aber ich verstehe Sie nicht",
+      "Ich bin mir nicht sicher, welche Nachricht Sie mir mitteilen möchten",
+      "Ich bin noch jung, du könntest mir auf GitHub helfen, mich zu verbessern",
+      "Ich kann Ihre Anfrage leider nicht verstehen"
+    ]
+  },
+  {
+    "tag": "no permission",
+    "messages": [
+      "Sie haben dazu keine Befugnis."
+    ]
+  },
+  {
+    "tag": "patterns same",
+    "messages": [
+      "Die Muster und/oder Antworten dürfen nicht leer sein."
+    ]
+  },
+  {
+    "tag": "tags same",
+    "messages": [
+      "Es ist bereits ein Vorhaben mit diesem Tag vorhanden"
+    ]
+  },
+  {
+    "tag": "spotify tokens",
+    "messages": [
+      "Sie benötigen zwei Token."
+    ]
+  },
+  {
+    "tag": "reminder",
+    "messages": [
+      "- “%s” für die %s"
+    ]
+  },
+  {
+    "tag": "no reminders",
+    "messages": [
+      "Sie haben keine Erinnerungen gespeichert."
+    ]
+  },
+  {
+    "tag": "spotify credentials",
+    "messages": [
+      "Sie müssen Ihre Spotify-Anmeldeinformationen eingeben."
+    ]
+  },
+  {
+    "tag": "spotify login",
+    "messages": [
+      "Login läuft <meta http-equiv=\"refresh\" content=\"0; url = %s\" />,"
+    ]
+  },
+  {
+    "tag": "too long",
+    "messages": [
+      "Bitte reduzieren Sie die Größe Ihrer Nachricht auf weniger als 500 Zeichen"
+    ]
+  },
+  {
+    "tag": "no country",
+    "messages": [
+      "Ich habe in Ihrer Nachricht leider kein Land gefunden"
+    ]
+  },
+  {
+    "tag": "math not valid",
+    "messages": [
+      "Ihr mathematischer Ausdruck ist ungültig",
+      "Bitte überprüfen Sie Ihren mathematischen Ausdruck"
+    ]
+  },
+  {
+    "tag": "don't know name",
+    "messages": [
+      "Es tut mir leid, aber ich kenne Ihren Namen noch nicht"
+    ]
+  },
+  {
+    "tag": "no name",
+    "messages": [
+      "Es tut mir leid, ich konnte in Ihrer Nachricht keinen Namen finden"
+    ]
+  },
+  {
+    "tag": "no genres",
+    "messages": [
+      "Entschuldigung, ich kann kein Filmgenre in Ihrer Nachricht finden. Probieren Sie diese aus: Action, Abenteuer, Animation, Kinder, Komödie, Kriminalität, Dokumentarfilm, Drama, Fantasy, Film-Noir, Horror, Musical, Mystery, Romance, Sci-Fi , Thriller, Krieg und Western"
+    ]
+  },
+  {
+    "tag": "no genres saved",
+    "messages": [
+      "Entschuldigung, ich kann kein Filmgenre in Ihren Daten finden. Versuchen Sie, Ihre Einstellungen mit „Ich mag Abenteuerfilme“ festzulegen."
+    ]
+  },
+  {
+    "tag": "no jokes",
+    "messages": [
+      "Entschuldigung, ich kann leider keinen Witz erzählen. Bitte zieh mich nicht aus dem Strom."
+    ]
+  },
+  {
+    "tag": "no random range",
+    "messages": [
+      "Entschuldigung, ich kann keine Zufallszahl im vorgegebenen Intervall finden. Bitte überprüfe die Intervallgrenzen."
+    ]
+  },
+  {
+    "tag": "no advices",
+    "messages": [
+      "Entschuldigung, ich kann keinen Ratschlag geben. Bitte hasse mich nicht."
+    ]
+  }
+]
