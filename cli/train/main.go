@@ -58,11 +58,18 @@ func main() {
     buf := make([]byte, 1024)
 
     for {
+        ln.SetReadDeadline(time.Now().Add(1 * time.Second)) // تنظیم یک تایمر برای کاهش مصرف CPU در زمان بیکاری
         n, addr, err := ln.ReadFromUDP(buf)
+
         if err != nil {
+            if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
+                // اگر تایم اوت شد، ادامه می‌دهیم و CPU مصرف نمی‌شود
+                continue
+            }
             log.Fatal(err)
         }
 
+        // اگر درخواستی دریافت شد، آن را به goroutine سپرده و مدیریت می‌کنیم
         go handleRequest(ln, addr, buf, n)
     }
 }
