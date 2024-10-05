@@ -1,14 +1,14 @@
 package server
 
 import (
-	"encoding/json"
+	// "encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
 	"marboris/core/analysis"
 
-	"marboris/core/training"
+	// "marboris/core/training"
 
 	"marboris/core/dashboard"
 
@@ -39,7 +39,7 @@ func Serve(_neuralNetworks map[string]network.Network, port string) {
 	router.HandleFunc("/api/{locale}/dashboard", GetDashboardData).Methods("GET")
 	router.HandleFunc("/api/{locale}/intent", dashboard.CreateIntent).Methods("POST")
 	router.HandleFunc("/api/{locale}/intent", dashboard.DeleteIntent).Methods("DELETE", "OPTIONS")
-	router.HandleFunc("/api/{locale}/train", Train).Methods("POST")
+	// router.HandleFunc("/api/{locale}/train", Train).Methods("POST")
 	router.HandleFunc("/api/{locale}/intents", dashboard.GetIntents).Methods("GET")
 	router.HandleFunc("/api/coverage", analysis.GetCoverage).Methods("GET")
 
@@ -54,20 +54,20 @@ func Serve(_neuralNetworks map[string]network.Network, port string) {
 }
 
 // Train is the route to re-train the neural network
-func Train(w http.ResponseWriter, r *http.Request) {
-	// Checks if the token present in the headers is the right one
-	token := r.Header.Get("Marboris-Token")
-	if !dashboard.ChecksToken(token) {
-		json.NewEncoder(w).Encode(dashboard.Error{
-			Message: "You don't have the permission to do this.",
-		})
-		return
-	}
+// func Train(w http.ResponseWriter, r *http.Request) {
+// 	// Checks if the token present in the headers is the right one
+// 	token := r.Header.Get("Marboris-Token")
+// 	if !dashboard.ChecksToken(token) {
+// 		json.NewEncoder(w).Encode(dashboard.Error{
+// 			Message: "You don't have the permission to do this.",
+// 		})
+// 		return
+// 	}
 
-	magenta := color.FgMagenta.Render
-	fmt.Printf("\nRe-training the %s..\n", magenta("neural network"))
+// 	magenta := color.FgMagenta.Render
+// 	fmt.Printf("\nRe-training the %s..\n", magenta("neural network"))
 
-	for locale := range neuralNetworks {
-		neuralNetworks[locale] = training.CreateNeuralNetwork(locale, true)
-	}
-}
+// 	for locale := range neuralNetworks {
+// 		neuralNetworks[locale] = training.CreateNeuralNetwork(locale, true)
+// 	}
+// }

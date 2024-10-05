@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
+	// "strings"
 
 	"marboris/core/locales"
 	"marboris/core/training"
@@ -24,13 +24,13 @@ var neuralNetworks = map[string]network.Network{}
 
 func main() {
 	port := flag.String("port", "8080", "The port for the API and WebSocket.")
-	localesFlag := flag.String("re-train", "", "The locale(s) to re-train.")
+	/*localesFlag := flag.String("re-train", "", "The locale(s) to re-train.")*/
 	flag.Parse()
 
 	// If the locales flag isn't empty then retrain the given models
-	if *localesFlag != "" {
+	/*if *localesFlag != "" {
 		reTrainModels(*localesFlag)
-	}
+	}*/
 
 	// Print the Marboris ascii text
 	marborisASCII := string(util.ReadFile("res/marboris-ascii.txt"))
@@ -58,7 +58,8 @@ func main() {
 }
 
 // reTrainModels retrain the given locales
-func reTrainModels(localesFlag string) {
+// Always true
+/*func reTrainModels(localesFlag string) {
 	// Iterate locales by separating them by comma
 	for _, localeFlag := range strings.Split(localesFlag, ",") {
 		path := fmt.Sprintf("res/locales/%s/training.json", localeFlag)
@@ -69,4 +70,4 @@ func reTrainModels(localesFlag string) {
 			return
 		}
 	}
-}
+}*/
