@@ -15,7 +15,7 @@ type Information struct {
 	SpotifySecret  string        `json:"spotify_secret"`
 }
 
-// A Reminder is something the user asked for Olivia to remember
+// A Reminder is something the user asked for Marboris to remember
 type Reminder struct {
 	Reason string `json:"reason"`
 	Date   string `json:"date"`

@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/olivia-ai/olivia/locales"
+	"marboris/core/locales"
 
-	"github.com/olivia-ai/olivia/modules"
-	"github.com/olivia-ai/olivia/util"
+	"marboris/core/modules"
+	"marboris/core/util"
 )
 
 var (
@@ -38,7 +38,7 @@ type CoverageDetails struct {
 
 // GetCoverage encodes the coverage of each language in json
 func GetCoverage(writer http.ResponseWriter, _ *http.Request) {
-	allowedHeaders := "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,Olivia-Token"
+	allowedHeaders := "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,Marboris-Token"
 	writer.Header().Set("Access-Control-Allow-Origin", "*")
 	writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	writer.Header().Set("Access-Control-Allow-Headers", allowedHeaders)

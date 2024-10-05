@@ -2,17 +2,15 @@ package locales
 
 import (
 	// Import these packages to trigger the init() function
-	_ "github.com/olivia-ai/olivia/res/locales/ca"
-	_ "github.com/olivia-ai/olivia/res/locales/de"
-	_ "github.com/olivia-ai/olivia/res/locales/el"
-	_ "github.com/olivia-ai/olivia/res/locales/en"
-	_ "github.com/olivia-ai/olivia/res/locales/es"
-	_ "github.com/olivia-ai/olivia/res/locales/fr"
-	_ "github.com/olivia-ai/olivia/res/locales/it"
-	_ "github.com/olivia-ai/olivia/res/locales/nl"
-	_ "github.com/olivia-ai/olivia/res/locales/tr"
-	_ "github.com/olivia-ai/olivia/res/locales/el"
-
+	_ "marboris/core/res/locales/ca"
+	_ "marboris/core/res/locales/de"
+	_ "marboris/core/res/locales/el"
+	_ "marboris/core/res/locales/en"
+	_ "marboris/core/res/locales/es"
+	_ "marboris/core/res/locales/fr"
+	_ "marboris/core/res/locales/it"
+	_ "marboris/core/res/locales/nl"
+	_ "marboris/core/res/locales/tr"
 )
 
 // Locales is the list of locales's tags and names

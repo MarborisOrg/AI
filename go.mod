@@ -1,4 +1,4 @@
-module github.com/olivia-ai/olivia
+module marboris/core
 
 go 1.12
 

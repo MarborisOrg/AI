@@ -1,7 +1,7 @@
 package en
 
 import (
-	"github.com/olivia-ai/olivia/modules"
+	"marboris/core/modules"
 )
 
 func init() {
@@ -78,8 +78,8 @@ func init() {
 			Patterns: []string{
 				"My favorite movie genres are Comedy, Horror",
 				"I like the Comedy, Horror genres",
-                "I like movies about War",
-                "I like Action movies",
+				"I like movies about War",
+				"I like Action movies",
 			},
 			Responses: []string{
 				"Great choices! I saved this movie genre information to your client.",
@@ -247,7 +247,7 @@ func init() {
 				"Listen closely, %s",
 			},
 			Replacer: modules.AdvicesReplacer,
-},
+		},
 	})
 
 	// COUNTRIES

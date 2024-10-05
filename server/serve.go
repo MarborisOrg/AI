@@ -6,17 +6,18 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/olivia-ai/olivia/analysis"
+	"marboris/core/analysis"
 
-	"github.com/olivia-ai/olivia/training"
+	"marboris/core/training"
 
-	"github.com/olivia-ai/olivia/dashboard"
+	"marboris/core/dashboard"
 
-	"github.com/olivia-ai/olivia/modules/spotify"
+	"marboris/core/modules/spotify"
+
+	"marboris/core/network"
 
 	"github.com/gookit/color"
 	"github.com/gorilla/mux"
-	"github.com/olivia-ai/olivia/network"
 	gocache "github.com/patrickmn/go-cache"
 )
 
@@ -58,7 +59,7 @@ func Serve(_neuralNetworks map[string]network.Network, port string) {
 // Train is the route to re-train the neural network
 func Train(w http.ResponseWriter, r *http.Request) {
 	// Checks if the token present in the headers is the right one
-	token := r.Header.Get("Olivia-Token")
+	token := r.Header.Get("Marboris-Token")
 	if !dashboard.ChecksToken(token) {
 		json.NewEncoder(w).Encode(dashboard.Error{
 			Message: "You don't have the permission to do this.",

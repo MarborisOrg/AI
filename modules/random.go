@@ -5,8 +5,8 @@ import (
 	"math/rand"
 	"strconv"
 
-	"github.com/olivia-ai/olivia/language"
-	"github.com/olivia-ai/olivia/util"
+	"marboris/core/language"
+	"marboris/core/util"
 )
 
 // RandomTag is the intent tag for its module

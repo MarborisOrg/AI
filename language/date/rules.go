@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/olivia-ai/olivia/util"
+	"marboris/core/util"
 )
 
 const day = time.Hour * 24

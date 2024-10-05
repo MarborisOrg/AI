@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"os"
 
+	"marboris/core/analysis"
+	"marboris/core/network"
+	"marboris/core/util"
+
 	"github.com/gookit/color"
-	"github.com/olivia-ai/olivia/analysis"
-	"github.com/olivia-ai/olivia/network"
-	"github.com/olivia-ai/olivia/util"
 )
 
 // TrainData returns the inputs and outputs for the neural network

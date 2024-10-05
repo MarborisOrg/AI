@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/olivia-ai/olivia/locales"
+	"marboris/core/locales"
 
 	"github.com/gookit/color"
 	"gopkg.in/cheggaaa/pb.v1"

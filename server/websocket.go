@@ -6,15 +6,16 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/olivia-ai/olivia/locales"
+	"marboris/core/locales"
 
-	"github.com/olivia-ai/olivia/modules/start"
+	"marboris/core/modules/start"
+
+	"marboris/core/analysis"
+	"marboris/core/user"
+	"marboris/core/util"
 
 	"github.com/gookit/color"
 	"github.com/gorilla/websocket"
-	"github.com/olivia-ai/olivia/analysis"
-	"github.com/olivia-ai/olivia/user"
-	"github.com/olivia-ai/olivia/util"
 )
 
 // Configure the upgrader

@@ -6,12 +6,13 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/olivia-ai/olivia/util"
+	"marboris/core/util"
 
 	"github.com/gorilla/mux"
 
+	"marboris/core/analysis"
+
 	"github.com/gookit/color"
-	"github.com/olivia-ai/olivia/analysis"
 )
 
 // An Error is what the api replies when an error occurs
@@ -81,7 +82,7 @@ func GetIntents(w http.ResponseWriter, r *http.Request) {
 
 // CreateIntent is the route to create a new intent
 func CreateIntent(w http.ResponseWriter, r *http.Request) {
-	allowedHeaders := "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,Olivia-Token"
+	allowedHeaders := "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,Marboris-Token"
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers", allowedHeaders)
@@ -90,7 +91,7 @@ func CreateIntent(w http.ResponseWriter, r *http.Request) {
 	data := mux.Vars(r)
 
 	// Checks if the token present in the headers is the right one
-	token := r.Header.Get("Olivia-Token")
+	token := r.Header.Get("Marboris-Token")
 	if !ChecksToken(token) {
 		json.NewEncoder(w).Encode(Error{
 			Message: util.GetMessage(data["locale"], "no permission"),
@@ -127,7 +128,7 @@ func CreateIntent(w http.ResponseWriter, r *http.Request) {
 
 // DeleteIntent is the route used to delete an intent
 func DeleteIntent(w http.ResponseWriter, r *http.Request) {
-	allowedHeaders := "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,Olivia-Token"
+	allowedHeaders := "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,Marboris-Token"
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers", allowedHeaders)
@@ -136,7 +137,7 @@ func DeleteIntent(w http.ResponseWriter, r *http.Request) {
 	data := mux.Vars(r)
 
 	// Checks if the token present in the headers is the right one
-	token := r.Header.Get("Olivia-Token")
+	token := r.Header.Get("Marboris-Token")
 	if !ChecksToken(token) {
 		json.NewEncoder(w).Encode(Error{
 			Message: util.GetMessage(data["locale"], "no permission"),

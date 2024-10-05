@@ -3,7 +3,7 @@ package language
 import (
 	"strings"
 
-	"github.com/olivia-ai/olivia/util"
+	"marboris/core/util"
 )
 
 var names = SerializeNames()

@@ -6,9 +6,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/olivia-ai/olivia/util"
+	"marboris/core/util"
 
-	"github.com/olivia-ai/olivia/user"
+	"marboris/core/user"
+
 	"github.com/zmb3/spotify"
 	"golang.org/x/oauth2"
 )
@@ -25,12 +26,12 @@ var (
 func init() {
 	// Set default value of the callback url
 	if callbackURL == "" {
-		callbackURL = "https://olivia-api.herokuapp.com/callback"
+		callbackURL = "https://olivia-api.herokuapp.com/callback" // TODO()
 	}
 
 	// Set default value of the redirect url
 	if redirectURL == "" {
-		redirectURL = "https://olivia-ai.org/chat"
+		redirectURL = "https://olivia-ai.org/chat" // TODO()
 	}
 
 	// Initialize the authenticator

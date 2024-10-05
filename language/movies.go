@@ -10,9 +10,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/olivia-ai/olivia/user"
+	"marboris/core/user"
 
-	"github.com/olivia-ai/olivia/util"
+	"marboris/core/util"
 )
 
 // Movie is the serializer from res/datasets/movies.csv

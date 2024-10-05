@@ -25,7 +25,7 @@ const (
 	logFileName    = "logfile.log"
 	configFileName = "config.json"
 	defaultPort    = "8080"
-	botName        = "olivia"
+	botName        = "marboris"
 	hostName       = "localhost"
 	defaultSsl     = false
 )

@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/olivia-ai/olivia/util"
+	"marboris/core/util"
 )
 
 const adviceURL = "https://api.adviceslip.com/advice"

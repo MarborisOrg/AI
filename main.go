@@ -6,18 +6,18 @@ import (
 	"os"
 	"strings"
 
-	"github.com/olivia-ai/olivia/locales"
-	"github.com/olivia-ai/olivia/training"
+	"marboris/core/locales"
+	"marboris/core/training"
 
-	"github.com/olivia-ai/olivia/dashboard"
+	"marboris/core/dashboard"
 
-	"github.com/olivia-ai/olivia/util"
+	"marboris/core/util"
 
 	"github.com/gookit/color"
 
-	"github.com/olivia-ai/olivia/network"
+	"marboris/core/network"
 
-	"github.com/olivia-ai/olivia/server"
+	"marboris/core/server"
 )
 
 var neuralNetworks = map[string]network.Network{}
@@ -32,9 +32,9 @@ func main() {
 		reTrainModels(*localesFlag)
 	}
 
-	// Print the Olivia ascii text
-	oliviaASCII := string(util.ReadFile("res/olivia-ascii.txt"))
-	fmt.Println(color.FgLightGreen.Render(oliviaASCII))
+	// Print the Marboris ascii text
+	marborisASCII := string(util.ReadFile("res/marboris-ascii.txt"))
+	fmt.Println(color.FgLightGreen.Render(marborisASCII))
 
 	// Create the authentication token
 	dashboard.Authenticate()

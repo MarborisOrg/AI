@@ -7,7 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/olivia-ai/olivia/network"
+	"marboris/core/network"
 )
 
 // Dashboard contains the data sent for the dashboard

@@ -1,4 +1,4 @@
-module github.com/S-mrb-S/olivia/cmd
+module marboris/cmd
 
 go 1.23.1
 

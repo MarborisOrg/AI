@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/olivia-ai/olivia/util"
+	"marboris/core/util"
 
-	"github.com/olivia-ai/olivia/user"
+	"marboris/core/user"
 
-	"github.com/olivia-ai/olivia/language"
+	"marboris/core/language"
+
 	"github.com/zmb3/spotify"
 
-	spotifyModule "github.com/olivia-ai/olivia/modules/spotify"
+	spotifyModule "marboris/core/modules/spotify"
 )
 
 var (

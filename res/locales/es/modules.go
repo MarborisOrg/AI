@@ -1,7 +1,7 @@
 package es
 
 import (
-	"github.com/olivia-ai/olivia/modules"
+	"marboris/core/modules"
 )
 
 func init() {

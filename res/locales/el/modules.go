@@ -1,7 +1,7 @@
 package en
 
 import (
-	"github.com/olivia-ai/olivia/modules"
+	"marboris/core/modules"
 )
 
 func init() {
@@ -17,7 +17,6 @@ func init() {
 				"Ποιά είναι η περιοχή του",
 				"Πες μου την περιοχή της",
 				"Πες μου την περιοχή του",
-
 			},
 			Responses: []string{
 				"Η περιοχή της/του %s είναι %gkm²",

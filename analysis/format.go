@@ -5,9 +5,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/olivia-ai/olivia/locales"
+	"marboris/core/locales"
 
-	"github.com/olivia-ai/olivia/util"
+	"marboris/core/util"
+
 	"github.com/tebeka/snowball"
 )
 
