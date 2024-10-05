@@ -170,58 +170,58 @@ func init() {
 		// please don't forget to translate it.
 		// Otherwise, remove the registration of the Reminders modules in this file.
 
-		{
-			Tag: modules.ReminderSetterTag,
-			Patterns: []string{
-				"Remind me to cook a breakfast at 8pm",
-				"Remind me to call mom tuesday",
-				"Note that I have an exam",
-				"Remind me that I have a conference call tomorrow at 9pm",
-			},
-			Responses: []string{
-				"Noted! I will remind you: “%s” for the %s",
-			},
-			Replacer: modules.ReminderSetterReplacer,
-		},
+		// {
+		// 	Tag: modules.ReminderSetterTag,
+		// 	Patterns: []string{
+		// 		"Remind me to cook a breakfast at 8pm",
+		// 		"Remind me to call mom tuesday",
+		// 		"Note that I have an exam",
+		// 		"Remind me that I have a conference call tomorrow at 9pm",
+		// 	},
+		// 	Responses: []string{
+		// 		"Noted! I will remind you: “%s” for the %s",
+		// 	},
+		// 	Replacer: modules.ReminderSetterReplacer,
+		// },
 
-		{
-			Tag: modules.ReminderGetterTag,
-			Patterns: []string{
-				"What did I ask for you to remember",
-				"Give me my reminders",
-			},
-			Responses: []string{
-				"You asked me to remember those things:\n%s",
-			},
-			Replacer: modules.ReminderGetterReplacer,
-		},
+		// {
+		// 	Tag: modules.ReminderGetterTag,
+		// 	Patterns: []string{
+		// 		"What did I ask for you to remember",
+		// 		"Give me my reminders",
+		// 	},
+		// 	Responses: []string{
+		// 		"You asked me to remember those things:\n%s",
+		// 	},
+		// 	Replacer: modules.ReminderGetterReplacer,
+		// },
 
 		// SPOTIFY
 		// A translation is needed in `language/music`, please don't forget to translate it.
 		// Otherwise, remove the registration of the Spotify modules in this file.
 
-		{
-			Tag: modules.SpotifySetterTag,
-			Patterns: []string{
-				"Here are my spotify tokens",
-				"My spotify secrets",
-			},
-			Responses: []string{
-				"Login in progress",
-			},
-			Replacer: modules.SpotifySetterReplacer,
-		},
+		// {
+		// 	Tag: modules.SpotifySetterTag,
+		// 	Patterns: []string{
+		// 		"Here are my spotify tokens",
+		// 		"My spotify secrets",
+		// 	},
+		// 	Responses: []string{
+		// 		"Login in progress",
+		// 	},
+		// 	Replacer: modules.SpotifySetterReplacer,
+		// },
 
-		{
-			Tag: modules.SpotifyPlayerTag,
-			Patterns: []string{
-				"Play from on Spotify",
-			},
-			Responses: []string{
-				"Playing %s from %s on Spotify.",
-			},
-			Replacer: modules.SpotifyPlayerReplacer,
-		},
+		// {
+		// 	Tag: modules.SpotifyPlayerTag,
+		// 	Patterns: []string{
+		// 		"Play from on Spotify",
+		// 	},
+		// 	Responses: []string{
+		// 		"Playing %s from %s on Spotify.",
+		// 	},
+		// 	Replacer: modules.SpotifyPlayerReplacer,
+		// },
 
 		{
 			Tag: modules.JokesTag,
