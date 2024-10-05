@@ -12,8 +12,6 @@ import (
 
 	"marboris/core/dashboard"
 
-	// "marboris/core/modules/spotify"
-
 	"marboris/core/network"
 
 	"github.com/gookit/color"
@@ -35,7 +33,6 @@ func Serve(_neuralNetworks map[string]network.Network, port string) {
 
 	// Initializes the router
 	router := mux.NewRouter()
-	// router.HandleFunc("/callback", spotify.CompleteAuth)
 	// Serve the websocket
 	router.HandleFunc("/websocket", SocketHandle)
 	// Serve the API

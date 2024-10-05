@@ -1,16 +1,7 @@
 package locales
 
 import (
-	// Import these packages to trigger the init() function
-	// _ "marboris/core/res/locales/ca"
-	// _ "marboris/core/res/locales/de"
-	// _ "marboris/core/res/locales/el"
 	_ "marboris/core/res/locales/en"
-	// _ "marboris/core/res/locales/es"
-	// _ "marboris/core/res/locales/fr"
-	// _ "marboris/core/res/locales/it"
-	// _ "marboris/core/res/locales/nl"
-	// _ "marboris/core/res/locales/tr"
 )
 
 // Locales is the list of locales's tags and names
@@ -21,38 +12,6 @@ var Locales = []Locale{
 		Tag:  "en",
 		Name: "english",
 	},
-	// {
-	// 	Tag:  "de",
-	// 	Name: "german",
-	// },
-	// {
-	// 	Tag:  "fr",
-	// 	Name: "french",
-	// },
-	// {
-	// 	Tag:  "es",
-	// 	Name: "spanish",
-	// },
-	// {
-	// 	Tag:  "ca",
-	// 	Name: "catalan",
-	// },
-	// {
-	// 	Tag:  "it",
-	// 	Name: "italian",
-	// },
-	// {
-	// 	Tag:  "tr",
-	// 	Name: "turkish",
-	// },
-	// {
-	// 	Tag:  "nl",
-	// 	Name: "dutch",
-	// },
-	// {
-	// 	Tag:  "el",
-	// 	Name: "greek",
-	// },
 }
 
 // A Locale is a registered locale in the file

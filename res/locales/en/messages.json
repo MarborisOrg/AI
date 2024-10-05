@@ -9,12 +9,6 @@
     ]
   },
   {
-    "tag": "list reminders",
-    "messages": [
-      "Hello %s! For today you have these reminders: %s."
-    ]
-  },
-  {
     "tag": "no permission",
     "messages": [
       "You don't have the permission to do this."
@@ -30,36 +24,6 @@
     "tag": "tags same",
     "messages": [
       "An intent already exists with this tag."
-    ]
-  },
-  {
-    "tag": "spotify tokens",
-    "messages": [
-      "You need to send the two tokens."
-    ]
-  },
-  {
-    "tag": "reminder",
-    "messages": [
-      "- “%s” for the %s"
-    ]
-  },
-  {
-    "tag": "no reminders",
-    "messages": [
-      "You have no reminders saved."
-    ]
-  },
-  {
-    "tag": "spotify credentials",
-    "messages": [
-      "You need to enter your Spotify credentials."
-    ]
-  },
-  {
-    "tag": "spotify login",
-    "messages": [
-      "Login in progress <meta http-equiv=\"refresh\" content=\"0; url = %s\" />,"
     ]
   },
   {
