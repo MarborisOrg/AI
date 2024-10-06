@@ -449,7 +449,6 @@ func (network *Network) Train(iterations int) {
 	fmt.Printf("The error rate is %s.\n", color.FgGreen.Render(arrangedError))
 }
 
-
 // package training
 
 // import (
@@ -513,7 +512,6 @@ func CreateNeuralNetwork(locale string, ignoreTrainingFile bool) (neuralNetwork 
 
 	return
 }
-
 
 // Slice file
 
