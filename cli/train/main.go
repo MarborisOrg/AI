@@ -13,10 +13,21 @@ import (
 var busy bool
 var mu sync.Mutex
 
+// default port for server
+const portDef = "8081"
+// default PM for client
+const opOk = "Ok"
+const opFail = "Failer"
+const opIgnor = "Ignored"
+// default val for training.
+const requireDef = true
+const rateDef = 0.1
+const hiddenNodesDef = 50
+
 // شبیه سازی عملیات طولانی
 func longOperation(rate float64, hiddenNodes int) error {
     fmt.Printf("Starting long operation with rate=%f and hiddenNodes=%d...\n", rate, hiddenNodes)
-    time.Sleep(10 * time.Second) // شبیه‌سازی عملیات طولانی
+    time.Sleep(8 * time.Second) // شبیه‌سازی عملیات طولانی
     fmt.Println("Operation completed.")
     // شبیه‌سازی یک خطای احتمالی برای ارسال پیام Failer
     // if time.Now().Second()%2 == 0 {
@@ -25,16 +36,13 @@ func longOperation(rate float64, hiddenNodes int) error {
     return nil
 }
 
-// تابع پردازش درخواست‌ها
 func handleRequest(conn net.Conn) {
     defer conn.Close()
 
-    // تنظیم مقادیر پیش‌فرض
-    req := true
-    rate := 0.1
-    hiddenNodes := 50
+    req := requireDef
+    rate := rateDef
+    hiddenNodes := hiddenNodesDef
 
-    // دریافت پیام از کلاینت
     buf := make([]byte, 1024)
     n, err := conn.Read(buf)
     if err != nil {
@@ -42,7 +50,6 @@ func handleRequest(conn net.Conn) {
         return
     }
 
-    // پردازش پیام دریافتی
     message := string(buf[:n])
     fmt.Printf("Received: %s\n", message)
 
@@ -58,40 +65,51 @@ func handleRequest(conn net.Conn) {
         value := strings.TrimSpace(keyValue[1])
 
         switch key {
-        case "req":
-            req, err = strconv.ParseBool(value)
-            if err != nil {
-                req = true // پیش‌فرض
-            }
-        case "rate":
-            rate, err = strconv.ParseFloat(value, 64)
-            if err != nil {
-                rate = 0.1 // پیش‌فرض
-            }
-        case "hiddensNodes":
-            hiddenNodes, err = strconv.Atoi(value)
-            if err != nil {
-                hiddenNodes = 50 // پیش‌فرض
-            }
+            case "req":
+                req, err = strconv.ParseBool(value)
+                if err != nil {
+                    req = true
+                }
+            case "rate":
+                rate, err = strconv.ParseFloat(value, 64)
+                if err != nil {
+                    rate = 0.1
+                }
+            case "hiddensNodes":
+                hiddenNodes, err = strconv.Atoi(value)
+                if err != nil {
+                    hiddenNodes = hiddenNodesDef
+                }
         }
     }
 
-    // چاپ پارامترها
-    fmt.Printf("req: %v, rate: %f, hiddensNodes: %d\n", req, rate, hiddenNodes)
+    fmt.Printf("background work: %v\n", req)
 
-    // اجرای عملیات اصلی بر اساس مقدار req
+    // قفل برای جلوگیری از اجرای همزمان عملیات اصلی
+    mu.Lock()
+    if busy {
+        mu.Unlock()
+        // ارسال پیام Ignored اگر سرور مشغول باشد
+        conn.Write([]byte(opIgnor))
+        fmt.Println("Server is busy, ignoring request.")
+        return
+    }
+    busy = true
+    mu.Unlock()
+
+    // اجرای عملیات اصلی
+    var response string
     if req {
         // حالت بلوک‌شده: کلاینت منتظر می‌ماند
         err := longOperation(rate, hiddenNodes)
-        var response string
         if err != nil {
-            response = "Failer"
+            response = opFail
         } else {
-            response = "Ok"
+            response = opOk
         }
         conn.Write([]byte(response))
     } else {
-        // حالت پس‌زمینه: کلاینت منتظر نمی‌ماند
+        // حالت پس‌زمینه: عملیات اصلی انجام می‌شود اما کلاینت منتظر نمی‌ماند
         go func() {
             err := longOperation(rate, hiddenNodes)
             if err != nil {
@@ -99,19 +117,32 @@ func handleRequest(conn net.Conn) {
             } else {
                 fmt.Println("Background operation succeeded")
             }
+
+            // بعد از اتمام عملیات، سرور دوباره آماده پردازش درخواست‌های جدید می‌شود
+            mu.Lock()
+            busy = false
+            mu.Unlock()
         }()
-        conn.Write([]byte("Ok"))
+        conn.Write([]byte(opOk))
+    }
+
+    // اگر حالت بلوک‌شده بود، قفل را پس از عملیات آزاد می‌کنیم
+    if req {
+        mu.Lock()
+        busy = false
+        mu.Unlock()
     }
 }
 
 func main() {
-    ln, err := net.Listen("tcp", ":8081") // استفاده از TCP
+    listenPort := "0.0.0.0:" + portDef
+    ln, err := net.Listen("tcp", listenPort) // استفاده از TCP
     if err != nil {
         log.Fatal(err)
     }
     defer ln.Close()
 
-    fmt.Println("Server is listening on port 8081")
+    fmt.Printf("Server is listening on port %s\n", portDef)
 
     for {
         conn, err := ln.Accept() // قبول اتصال از کلاینت

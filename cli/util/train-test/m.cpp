@@ -6,6 +6,8 @@
 #include <chrono>
 #include <thread>
 
+
+// Test Training Server
 int main() {
     while (true) {
         // ایجاد سوکت TCP
@@ -19,7 +21,7 @@ int main() {
         std::memset(&server_addr, 0, sizeof(server_addr));
         server_addr.sin_family = AF_INET;
         server_addr.sin_port = htons(8081);
-        server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");  // آدرس سرور
+        server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");  // Or 0.0.0.0
 
         // اتصال به سرور
         if (connect(sock, (sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
