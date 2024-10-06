@@ -29,7 +29,7 @@ var (
 // Serve serves the server in the given port
 func Serve(_neuralNetworks map[string]network.Network, port string) {
 	// Set the current global network as a global variable
-	neuralNetworks = _neuralNetworks
+	neuralNetworks = _neuralNetworks // require
 
 	// Initializes the router
 	router := mux.NewRouter()
