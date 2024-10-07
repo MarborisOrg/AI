@@ -1070,7 +1070,7 @@ func (sentence Sentence) WordsBag(words []string) (bag []float64) {
 **/
 
 var (
-	defaultModules  []modules.Module
+	defaultModules  []Modulem
 	defaultIntents  []Intent
 	defaultMessages []Message
 )
@@ -1104,7 +1104,7 @@ func GetCoverage(writer http.ResponseWriter, _ *http.Request) {
 	writer.Header().Set("Access-Control-Expose-Headers", "Authorization")
 
 	defaultMessages, defaultIntents, defaultModules =
-		GetMessages("en"), GetIntentsa("en"), modules.GetModules("en")
+		GetMessages("en"), GetIntentsa("en"), GetModules("en")
 
 	var coverage []LocaleCoverage
 
@@ -1186,7 +1186,7 @@ func getModuleCoverage(locale string) CoverageDetails {
 	// Iterate through the default modules which are the english ones to verify if a module isn't
 	// translated in the given locale.
 	for _, defaultModule := range defaultModules {
-		module := modules.GetModuleByTag(defaultModule.Tag, locale)
+		module := GetModuleByTag(defaultModule.Tag, locale)
 
 		// Add the current module tag to the list of not-covered-modules
 		if module.Tag != defaultModule.Tag {
@@ -1698,13 +1698,13 @@ func Reply(request RequestMessage) []byte {
 // package en
 
 func init() {
-	modules.RegisterModules("en", []modules.Module{
+	RegisterModules("en", []Modulem{
 		// AREA
 		// For modules related to countries, please add the translations of the countries' names
 		// or open an issue to ask for translations.
 
 		{
-			Tag: modules.AreaTag,
+			Tag: AreaTag,
 			Patterns: []string{
 				"What is the area of ",
 				"Give me the area of ",
@@ -1712,12 +1712,12 @@ func init() {
 			Responses: []string{
 				"The area of %s is %gkm²",
 			},
-			Replacer: modules.AreaReplacer,
+			Replacer: AreaReplacer,
 		},
 
 		// CAPITAL
 		{
-			Tag: modules.CapitalTag,
+			Tag: CapitalTag,
 			Patterns: []string{
 				"What is the capital of ",
 				"What's the capital of ",
@@ -1726,12 +1726,12 @@ func init() {
 			Responses: []string{
 				"The capital of %s is %s",
 			},
-			Replacer: modules.CapitalReplacer,
+			Replacer: CapitalReplacer,
 		},
 
 		// CURRENCY
 		{
-			Tag: modules.CurrencyTag,
+			Tag: CurrencyTag,
 			Patterns: []string{
 				"Which currency is used in ",
 				"Give me the used currency of ",
@@ -1741,7 +1741,7 @@ func init() {
 			Responses: []string{
 				"The currency of %s is %s",
 			},
-			Replacer: modules.CurrencyReplacer,
+			Replacer: CurrencyReplacer,
 		},
 
 		// MATH
@@ -1749,7 +1749,7 @@ func init() {
 		// Otherwise, remove the registration of the Math module in this file.
 
 		{
-			Tag: modules.MathTag,
+			Tag: MathTag,
 			Patterns: []string{
 				"Give me the result of ",
 				"Calculate ",
@@ -1758,7 +1758,7 @@ func init() {
 				"The result is %s",
 				"That makes %s",
 			},
-			Replacer: modules.MathReplacer,
+			Replacer: MathReplacer,
 		},
 
 		// MOVIES
@@ -1767,7 +1767,7 @@ func init() {
 		// Otherwise, remove the registration of the Movies modules in this file.
 
 		{
-			Tag: modules.GenresTag,
+			Tag: GenresTag,
 			Patterns: []string{
 				"My favorite movie genres are Comedy, Horror",
 				"I like the Comedy, Horror genres",
@@ -1778,11 +1778,11 @@ func init() {
 				"Great choices! I saved this movie genre information to your client.",
 				"Understood, I saved this movie genre information to your client.",
 			},
-			Replacer: modules.GenresReplacer,
+			Replacer: GenresReplacer,
 		},
 
 		{
-			Tag: modules.MoviesTag,
+			Tag: MoviesTag,
 			Patterns: []string{
 				"Find me a movie about",
 				"Give me a movie about",
@@ -1792,11 +1792,11 @@ func init() {
 				"I found the movie “%s” for you, which is rated %.02f/5",
 				"Sure, I found this movie “%s”, which is rated %.02f/5",
 			},
-			Replacer: modules.MovieSearchReplacer,
+			Replacer: MovieSearchReplacer,
 		},
 
 		{
-			Tag: modules.MoviesAlreadyTag,
+			Tag: MoviesAlreadyTag,
 			Patterns: []string{
 				"I already saw this movie",
 				"I have already watched this film",
@@ -1806,11 +1806,11 @@ func init() {
 			Responses: []string{
 				"Oh I see, here's another one “%s” which is rated %.02f/5",
 			},
-			Replacer: modules.MovieSearchReplacer,
+			Replacer: MovieSearchReplacer,
 		},
 
 		{
-			Tag: modules.MoviesDataTag,
+			Tag: MoviesDataTag,
 			Patterns: []string{
 				"I'm bored",
 				"I don't know what to do",
@@ -1818,23 +1818,23 @@ func init() {
 			Responses: []string{
 				"I propose you watch the %s movie “%s”, which is rated %.02f/5",
 			},
-			Replacer: modules.MovieSearchFromInformationReplacer,
+			Replacer: MovieSearchFromInformationReplacer,
 		},
 
 		// NAME
 		{
-			Tag: modules.NameGetterTag,
+			Tag: NameGetterTag,
 			Patterns: []string{
 				"Do you know my name?",
 			},
 			Responses: []string{
 				"Your name is %s!",
 			},
-			Replacer: modules.NameGetterReplacer,
+			Replacer: NameGetterReplacer,
 		},
 
 		{
-			Tag: modules.NameSetterTag,
+			Tag: NameSetterTag,
 			Patterns: []string{
 				"My name is ",
 				"You can call me ",
@@ -1842,12 +1842,12 @@ func init() {
 			Responses: []string{
 				"Great! Hi %s",
 			},
-			Replacer: modules.NameSetterReplacer,
+			Replacer: NameSetterReplacer,
 		},
 
 		// RANDOM
 		{
-			Tag: modules.RandomTag,
+			Tag: RandomTag,
 			Patterns: []string{
 				"Give me a random number",
 				"Generate a random number",
@@ -1855,11 +1855,11 @@ func init() {
 			Responses: []string{
 				"The number is %s",
 			},
-			Replacer: modules.RandomNumberReplacer,
+			Replacer: RandomNumberReplacer,
 		},
 
 		{
-			Tag: modules.JokesTag,
+			Tag: JokesTag,
 			Patterns: []string{
 				"Tell me a joke",
 				"Make me laugh",
@@ -1868,10 +1868,10 @@ func init() {
 				"Here you go, %s",
 				"Here's one, %s",
 			},
-			Replacer: modules.JokesReplacer,
+			Replacer: JokesReplacer,
 		},
 		{
-			Tag: modules.AdvicesTag,
+			Tag: AdvicesTag,
 			Patterns: []string{
 				"Give me an advice",
 				"Advise me",
@@ -1881,7 +1881,7 @@ func init() {
 				"Here's one, %s",
 				"Listen closely, %s",
 			},
-			Replacer: modules.AdvicesReplacer,
+			Replacer: AdvicesReplacer,
 		},
 	})
 
@@ -1889,7 +1889,7 @@ func init() {
 	// Please translate this method for adding the correct article in front of countries names.
 	// Otherwise, remove the countries modules from this file.
 
-	modules.ArticleCountries["en"] = ArticleCountries
+	ArticleCountriesm["en"] = ArticleCountries
 }
 
 // ArticleCountries returns the country with its article in front.
@@ -2046,18 +2046,18 @@ func FindMoviesGenres(locale, content string) (output []string) {
 
 
 // A Module is a module that will be executed when a connection is opened by a user
-type Module struct {
+type Modules struct {
 	Action func(string, string)
 }
 
 var (
-	modules []Module
+	moduless []Modules
 	message string
 )
 
 // RegisterModule registers the given module in the array
-func RegisterModule(module Module) {
-	modules = append(modules, module)
+func RegisterModuless(module Modules) {
+	moduless = append(moduless, module)
 }
 
 // SetMessage register the message which will be sent to the client
@@ -2074,7 +2074,7 @@ func GetMessage() string {
 func ExecuteModules(token, locale string) {
 	fmt.Println(color.FgGreen.Render("Executing start modules.."))
 
-	for _, module := range modules {
+	for _, module := range moduless {
 		module.Action(token, locale)
 	}
 }
@@ -2131,7 +2131,7 @@ func AreaReplacer(locale, entry, response, _ string) (string, string) {
 		return responseTag, GetMessageu(locale, responseTag)
 	}
 
-	return AreaTag, fmt.Sprintf(response, ArticleCountries[locale](country.Name[locale]), country.Area)
+	return AreaTag, fmt.Sprintf(response, ArticleCountriesm[locale](country.Name[locale]), country.Area)
 }
 
 
@@ -2142,7 +2142,7 @@ var (
 	CapitalTag = "capital"
 	// ArticleCountries is the map of functions to find the article in front of a country
 	// in different languages
-	ArticleCountries = map[string]func(string) string{}
+	ArticleCountriesm = map[string]func(string) string{}
 )
 
 // CapitalReplacer replaces the pattern contained inside the response by the capital of the country
@@ -2157,7 +2157,7 @@ func CapitalReplacer(locale, entry, response, _ string) (string, string) {
 		return responseTag, GetMessageu(locale, responseTag)
 	}
 
-	articleFunction, exists := ArticleCountries[locale]
+	articleFunction, exists := ArticleCountriesm[locale]
 	countryName := country.Name[locale]
 	if exists {
 		countryName = articleFunction(countryName)
@@ -2184,7 +2184,7 @@ func CurrencyReplacer(locale, entry, response, _ string) (string, string) {
 		return responseTag, GetMessageu(locale, responseTag)
 	}
 
-	return CurrencyTag, fmt.Sprintf(response, ArticleCountries[locale](country.Name[locale]), country.Currency)
+	return CurrencyTag, fmt.Sprintf(response, ArticleCountriesm[locale](country.Name[locale]), country.Currency)
 }
 
 
@@ -2279,7 +2279,7 @@ func MathReplacer(locale, entry, response, _ string) (string, string) {
 
 // Module is a structure for dynamic intents with a Tag, some Patterns and Responses and
 // a Replacer function to execute the dynamic changes.
-type Module struct {
+type Modulem struct {
 	Tag       string
 	Patterns  []string
 	Responses []string
@@ -2287,26 +2287,26 @@ type Module struct {
 	Context   string
 }
 
-var modules = map[string][]Module{}
+var modulesm = map[string][]Modulem{}
 
 // RegisterModule registers a module into the map
-func RegisterModule(locale string, module Module) {
-	modules[locale] = append(modules[locale], module)
+func RegisterModule(locale string, module Modulem) {
+	modulesm[locale] = append(modulesm[locale], module)
 }
 
-// RegisterModules registers an array of modules into the map
-func RegisterModules(locale string, _modules []Module) {
-	modules[locale] = append(modules[locale], _modules...)
+// RegisterModules registers an array of modulesm into the map
+func RegisterModules(locale string, _modules []Modulem) {
+	modulesm[locale] = append(modulesm[locale], _modules...)
 }
 
-// GetModules returns all the registered modules
-func GetModules(locale string) []Module {
-	return modules[locale]
+// GetModules returns all the registered modulesm
+func GetModules(locale string) []Modulem {
+	return modulesm[locale]
 }
 
 // GetModuleByTag returns a module found by the given tag and locale
-func GetModuleByTag(tag, locale string) Module {
-	for _, module := range modules[locale] {
+func GetModuleByTag(tag, locale string) Modulem {
+	for _, module := range modulesm[locale] {
 		if tag != module.Tag {
 			continue
 		}
@@ -2314,12 +2314,12 @@ func GetModuleByTag(tag, locale string) Module {
 		return module
 	}
 
-	return Module{}
+	return Modulem{}
 }
 
 // ReplaceContent apply the Replacer of the matching module to the response and returns it
 func ReplaceContent(locale, tag, entry, response, token string) (string, string) {
-	for _, module := range modules[locale] {
+	for _, module := range modulesm[locale] {
 		if module.Tag != tag {
 			continue
 		}
