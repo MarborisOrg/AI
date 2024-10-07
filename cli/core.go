@@ -20,7 +20,6 @@ import (
 	gocache "github.com/patrickmn/go-cache"
 )
 
-
 import (
 	"regexp"
 	"strings"
@@ -33,10 +32,9 @@ import (
 )
 
 import (
-	"math"
 	"gopkg.in/cheggaaa/pb.v1"
+	"math"
 )
-
 
 import (
 	"golang.org/x/crypto/bcrypt"
@@ -46,7 +44,6 @@ import (
 	"log"
 
 	"github.com/gorilla/mux"
-
 )
 
 import (
@@ -59,20 +56,16 @@ import (
 import (
 	"reflect"
 
-
 	"github.com/gorilla/websocket"
 )
 
-
 import (
-
 	"github.com/soudy/mathcat"
 )
 
 import (
 	"errors"
 )
-
 
 // slice file
 
@@ -124,7 +117,6 @@ func Index(slice []string, text string) int {
 
 	return 0
 }
-
 
 // messages file
 
@@ -204,14 +196,13 @@ func ReadFile(path string) (bytes []byte) {
 	return bytes
 }
 
-
 // package user
 
 // Information is the user's information retrieved from the client
 type Information struct {
-	Name           string        `json:"name"`
-	MovieGenres    []string      `json:"movie_genres"`
-	MovieBlacklist []string      `json:"movie_blacklist"`
+	Name           string   `json:"name"`
+	MovieGenres    []string `json:"movie_genres"`
+	MovieBlacklist []string `json:"movie_blacklist"`
 }
 
 // userInformation is a map which is the cache for user information
@@ -284,9 +275,7 @@ func CreateNeuralNetwork(locale string, ignoreTrainingFile bool) (neuralNetwork 
 	return
 }
 
-
 // package network
-
 
 /**
 	derivative
@@ -714,10 +703,7 @@ func (network *Network) Train(iterations int) {
 	fmt.Printf("The error rate is %s.\n", color.FgGreen.Render(arrangedError))
 }
 
-
 // package analysis
-
-
 
 /**
 	sentence
@@ -1209,10 +1195,7 @@ func calculateCoverage(notCoveredLength, defaultLength int) int {
 	return 100 * (defaultLength - notCoveredLength) / defaultLength
 }
 
-
 // package locales
-
-
 
 // Locales is the list of locales's tags and names
 // Please check if the language is supported in https://github.com/tebeka/snowball,
@@ -1267,10 +1250,7 @@ func Exists(tag string) bool {
 	return false
 }
 
-
 // package dashboard
-
-
 
 var fileName = "res/authentication.txt"
 
@@ -1476,10 +1456,7 @@ func DeleteIntent(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(GetIntentsa(data["locale"]))
 }
 
-
 // package server
-
-
 
 // Dashboard contains the data sent for the dashboard
 type Dashboard struct {
@@ -1540,7 +1517,6 @@ func GetTraining(locale string) Training {
 	}
 }
 
-
 // package server
 
 var (
@@ -1576,7 +1552,6 @@ func Serve(_neuralNetworks map[string]Network, port string) {
 	}
 }
 
-
 // package server
 
 // Configure the upgrader
@@ -1588,17 +1563,17 @@ var upgrader = websocket.Upgrader{
 
 // RequestMessage is the structure that uses entry connections to chat with the websocket
 type RequestMessage struct {
-	Type        int              `json:"type"` // 0 for handshakes and 1 for messages
-	Content     string           `json:"content"`
-	Token       string           `json:"user_token"`
-	Locale      string           `json:"locale"`
+	Type        int         `json:"type"` // 0 for handshakes and 1 for messages
+	Content     string      `json:"content"`
+	Token       string      `json:"user_token"`
+	Locale      string      `json:"locale"`
 	Information Information `json:"information"`
 }
 
 // ResponseMessage is the structure used to reply to the user through the websocket
 type ResponseMessage struct {
-	Content     string           `json:"content"`
-	Tag         string           `json:"tag"`
+	Content     string      `json:"content"`
+	Tag         string      `json:"tag"`
 	Information Information `json:"information"`
 }
 
@@ -1693,7 +1668,6 @@ func Reply(request RequestMessage) []byte {
 
 	return bytes
 }
-
 
 // package en
 
@@ -1901,7 +1875,6 @@ func ArticleCountries(name string) string {
 	return name
 }
 
-
 // package language
 
 // import (
@@ -1954,7 +1927,6 @@ func FindCountry(locale, sentence string) Country {
 	// Returns an empty country if none has been found
 	return Country{}
 }
-
 
 // package language
 
@@ -2040,10 +2012,7 @@ func FindMoviesGenres(locale, content string) (output []string) {
 	return
 }
 
-
 // package start
-
-
 
 // A Module is a module that will be executed when a connection is opened by a user
 type Modules struct {
@@ -2052,7 +2021,7 @@ type Modules struct {
 
 var (
 	moduless []Modules
-	message string
+	message  string
 )
 
 // RegisterModule registers the given module in the array
@@ -2078,7 +2047,6 @@ func ExecuteModules(token, locale string) {
 		module.Action(token, locale)
 	}
 }
-
 
 // package modules
 
@@ -2113,7 +2081,6 @@ func AdvicesReplacer(locale, entry, response, _ string) (string, string) {
 	return AdvicesTag, fmt.Sprintf(response, advice)
 }
 
-
 // package modules
 
 // AreaTag is the intent tag for its module
@@ -2133,7 +2100,6 @@ func AreaReplacer(locale, entry, response, _ string) (string, string) {
 
 	return AreaTag, fmt.Sprintf(response, ArticleCountriesm[locale](country.Name[locale]), country.Area)
 }
-
 
 // package modules
 
@@ -2166,7 +2132,6 @@ func CapitalReplacer(locale, entry, response, _ string) (string, string) {
 	return CapitalTag, fmt.Sprintf(response, countryName, country.Capital)
 }
 
-
 // package modules
 
 // CurrencyTag is the intent tag for its module
@@ -2186,7 +2151,6 @@ func CurrencyReplacer(locale, entry, response, _ string) (string, string) {
 
 	return CurrencyTag, fmt.Sprintf(response, ArticleCountriesm[locale](country.Name[locale]), country.Currency)
 }
-
 
 // package modules
 
@@ -2235,7 +2199,6 @@ func JokesReplacer(locale, entry, response, _ string) (string, string) {
 	return JokesTag, fmt.Sprintf(response, jokeStr)
 }
 
-
 // package modules
 
 // MathTag is the intent tag for its module
@@ -2273,7 +2236,6 @@ func MathReplacer(locale, entry, response, _ string) (string, string) {
 
 	return MathTag, fmt.Sprintf(response, result)
 }
-
 
 // package modules
 
@@ -2329,7 +2291,6 @@ func ReplaceContent(locale, tag, entry, response, token string) (string, string)
 
 	return tag, response
 }
-
 
 // package modules
 
@@ -2404,7 +2365,6 @@ func MovieSearchFromInformationReplacer(locale, _, response, token string) (stri
 	return MoviesDataTag, fmt.Sprintf(response, genresJoined, movie.Name, movie.Rating)
 }
 
-
 // package modules
 
 var (
@@ -2449,7 +2409,6 @@ func NameSetterReplacer(locale, entry, response, token string) (string, string) 
 
 	return NameSetterTag, fmt.Sprintf(response, name)
 }
-
 
 // package modules
 
@@ -2537,9 +2496,7 @@ func DeleteTimes(locale, sentence string) string {
 	return strings.TrimSpace(sentence)
 }
 
-
 // package date
-
 
 // A Rule is a function that takes the given sentence and tries to parse a specific
 // rule to return a date, if not, the date is empty.
@@ -2551,7 +2508,6 @@ var rules []Rule
 func RegisterRule(rule Rule) {
 	rules = append(rules, rule)
 }
-
 
 // package date
 
@@ -2801,7 +2757,6 @@ func RuleTime(sentence string) time.Time {
 	return response
 }
 
-
 // package language
 
 // LevenshteinDistance calculates the Levenshtein Distance between two given words and returns it.
@@ -2844,7 +2799,6 @@ func LevenshteinContains(sentence, matching string, rate int) bool {
 	return false
 }
 
-
 // package language
 
 // MathDecimals is the map for having the regex on decimals in different languages
@@ -2877,7 +2831,6 @@ func FindNumberOfDecimals(locale, entry string) int {
 	return decimalsInt
 }
 
-
 // package language
 
 var names = SerializeNames()
@@ -2903,7 +2856,6 @@ func FindName(sentence string) string {
 
 	return ""
 }
-
 
 // package language
 
@@ -2935,9 +2887,7 @@ func FindRangeLimits(local, entry string) ([]int, error) {
 	return limitArr, nil
 }
 
-
 // package language
-
 
 // SearchTokens searches 2 tokens in the given sentence and returns it.
 func SearchTokens(sentence string) []string {
