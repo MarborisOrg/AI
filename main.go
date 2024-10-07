@@ -4,21 +4,12 @@ import (
 	"flag"
 	"fmt"
 
-	"marboris/core/locales"
-	"marboris/core/training"
-
-	"marboris/core/dashboard"
-
-	"marboris/core/util"
-
 	"github.com/gookit/color"
 
-	"marboris/core/network"
-
-	"marboris/core/server"
+	"marboris/core/cli"
 )
 
-var neuralNetworks = map[string]network.Network{}
+var neuralNetworks = map[string]cli.Network{}
 
 func main() {
 	port := flag.String("port", "8080", "The port for the API and WebSocket.")
@@ -26,21 +17,21 @@ func main() {
 	flag.Parse()
 
 	// Print the Marboris ascii text
-	marborisASCII := string(util.ReadFile("res/marboris-ascii.txt"))
+	marborisASCII := string(cli.ReadFile("res/marboris-ascii.txt"))
 	fmt.Println(color.FgLightGreen.Render(marborisASCII))
 
 	// Create the authentication token
-	dashboard.Authenticate()
+	cli.Authenticate()
 
-	for _, locale := range locales.Locales {
-		util.SerializeMessages(locale.Tag)
+	for _, locale := range cli.Locales {
+		cli.SerializeMessages(locale.Tag)
 
-		neuralNetworks[locale.Tag] = training.CreateNeuralNetwork(
+		neuralNetworks[locale.Tag] = cli.CreateNeuralNetwork(
 			locale.Tag,
 			false,
 		)
 	}
 
 	// Serves the server
-	server.Serve(neuralNetworks, *port)
+	cli.Serve(neuralNetworks, *port)
 }
