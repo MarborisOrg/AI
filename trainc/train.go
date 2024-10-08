@@ -28,15 +28,106 @@ import (
 	"reflect"
 )
 
-func GetUserInformation(token string) Information {
-	return userInformation[token]
-}
-
-func RegisterModules(locale string, _modules []Modulem) {
-	modulesm[locale] = append(modulesm[locale], _modules...)
-}
-
+// ----------------------------------------------------------
 var AreaTag = "area"
+var JokesTag = "jokes"
+var CurrencyTag = "currency"
+
+var (
+	CapitalTag = "capital"
+
+	ArticleCountriesm = map[string]func(string) string{}
+)
+var countries = SerializeCountries()
+
+var messages = map[string][]Message{}
+
+var (
+	GenresTag = "movies genres"
+
+	MoviesTag = "movies search"
+
+	MoviesAlreadyTag = "already seen movie"
+
+	MoviesDataTag = "movies search from data"
+)
+var userInformation = map[string]Information{}
+
+var (
+	MoviesGenres = map[string][]string{
+		"en": {
+			"Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama", "Fantasy",
+			"Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western",
+		},
+	}
+	movies = SerializeMovies()
+)
+
+var rules []Rule
+
+var RuleTranslations = map[string]RuleTranslation{
+	"en": {
+		DaysOfWeek: []string{
+			"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
+		},
+		Months: []string{
+			"january", "february", "march", "april", "may", "june", "july",
+			"august", "september", "october", "november", "december",
+		},
+		RuleToday:         `today|tonight`,
+		RuleTomorrow:      `(after )?tomorrow`,
+		RuleAfterTomorrow: "after",
+		RuleDayOfWeek:     `(next )?(monday|tuesday|wednesday|thursday|friday|saturday|sunday)`,
+		RuleNextDayOfWeek: "next",
+		RuleNaturalDate:   `january|february|march|april|may|june|july|august|september|october|november|december`,
+	},
+}
+
+var modulesm = map[string][]Modulem{}
+
+var intents = map[string][]Intent{}
+
+var Locales = []Locale{
+	{
+		Tag:  "en",
+		Name: "english",
+	},
+}
+
+var MathTag = "math"
+
+var MathDecimals = map[string]string{
+	"en": `(\d+( |-)decimal(s)?)|(number (of )?decimal(s)? (is )?\d+)`,
+}
+
+var (
+	NameGetterTag = "name getter"
+
+	NameSetterTag = "name setter"
+)
+
+var names = SerializeNames()
+
+var decimal = "\\b\\d+([\\.,]\\d+)?"
+
+var RandomTag = "random number"
+var AdvicesTag = "advices"
+var daysOfWeek = map[string]time.Weekday{
+	"monday":    time.Monday,
+	"tuesday":   time.Tuesday,
+	"wednesday": time.Wednesday,
+	"thursday":  time.Thursday,
+	"friday":    time.Friday,
+	"saturday":  time.Saturday,
+	"sunday":    time.Sunday,
+}
+
+// ----------------------------------------------------------
+const jokeURL = "https://official-joke-api.appspot.com/random_joke"
+const day = time.Hour * 24
+const adviceURL = "https://api.adviceslip.com/advice"
+
+// ----------------------------------------------------------
 
 type Country struct {
 	Name     map[string]string `json:"name"`
@@ -44,6 +135,99 @@ type Country struct {
 	Code     string            `json:"code"`
 	Area     float64           `json:"area"`
 	Currency string            `json:"currency"`
+}
+
+type Joke struct {
+	ID        int64  `json:"id"`
+	Type      string `json:"type"`
+	Setup     string `json:"setup"`
+	Punchline string `json:"punchline"`
+}
+
+type Message struct {
+	Tag      string   `json:"tag"`
+	Messages []string `json:"messages"`
+}
+
+type Information struct {
+	Name           string   `json:"name"`
+	MovieGenres    []string `json:"movie_genres"`
+	MovieBlacklist []string `json:"movie_blacklist"`
+}
+
+type Movie struct {
+	Name   string
+	Genres []string
+	Rating float64
+}
+
+type Rule func(string, string) time.Time
+
+type RuleTranslation struct {
+	DaysOfWeek        []string
+	Months            []string
+	RuleToday         string
+	RuleTomorrow      string
+	RuleAfterTomorrow string
+	RuleDayOfWeek     string
+	RuleNextDayOfWeek string
+	RuleNaturalDate   string
+}
+
+type Modulem struct {
+	Tag       string
+	Patterns  []string
+	Responses []string
+	Replacer  func(string, string, string, string) (string, string)
+	Context   string
+}
+
+type Intent struct {
+	Tag       string   `json:"tag"`
+	Patterns  []string `json:"patterns"`
+	Responses []string `json:"responses"`
+	Context   string   `json:"context"`
+}
+
+type Sentence struct {
+	Locale  string
+	Content string
+}
+
+type Document struct {
+	Sentence Sentence
+	Tag      string
+}
+
+type Locale struct {
+	Tag  string
+	Name string
+}
+type Matrix [][]float64
+
+type Network struct {
+	Layers  []Matrix
+	Weights []Matrix
+	Biases  []Matrix
+	Output  Matrix
+	Rate    float64
+	Errors  []float64
+	Time    float64
+	Locale  string
+}
+
+type Derivative struct {
+	Delta      Matrix
+	Adjustment Matrix
+}
+
+// ----------------------------------------------------------
+func GetUserInformation(token string) Information {
+	return userInformation[token]
+}
+
+func RegisterModules(locale string, _modules []Modulem) {
+	modulesm[locale] = append(modulesm[locale], _modules...)
 }
 
 func SerializeCountries() (countries []Country) {
@@ -54,8 +238,6 @@ func SerializeCountries() (countries []Country) {
 
 	return countries
 }
-
-var countries = SerializeCountries()
 
 func FindCountry(locale, sentence string) Country {
 	for _, country := range countries {
@@ -86,12 +268,6 @@ func AreaReplacer(locale, entry, response, _ string) (string, string) {
 	return AreaTag, fmt.Sprintf(response, ArticleCountriesm[locale](country.Name[locale]), country.Area)
 }
 
-var (
-	CapitalTag = "capital"
-
-	ArticleCountriesm = map[string]func(string) string{}
-)
-
 func CapitalReplacer(locale, entry, response, _ string) (string, string) {
 	country := FindCountry(locale, entry)
 
@@ -109,8 +285,6 @@ func CapitalReplacer(locale, entry, response, _ string) (string, string) {
 	return CapitalTag, fmt.Sprintf(response, countryName, country.Capital)
 }
 
-var CurrencyTag = "currency"
-
 func CurrencyReplacer(locale, entry, response, _ string) (string, string) {
 	country := FindCountry(locale, entry)
 
@@ -120,17 +294,6 @@ func CurrencyReplacer(locale, entry, response, _ string) (string, string) {
 	}
 
 	return CurrencyTag, fmt.Sprintf(response, ArticleCountriesm[locale](country.Name[locale]), country.Currency)
-}
-
-const jokeURL = "https://official-joke-api.appspot.com/random_joke"
-
-var JokesTag = "jokes"
-
-type Joke struct {
-	ID        int64  `json:"id"`
-	Type      string `json:"type"`
-	Setup     string `json:"setup"`
-	Punchline string `json:"punchline"`
 }
 
 func JokesReplacer(locale, entry, response, _ string) (string, string) {
@@ -160,12 +323,6 @@ func JokesReplacer(locale, entry, response, _ string) (string, string) {
 	jokeStr := joke.Setup + " " + joke.Punchline
 
 	return JokesTag, fmt.Sprintf(response, jokeStr)
-}
-
-var MathTag = "math"
-
-var MathDecimals = map[string]string{
-	"en": `(\d+( |-)decimal(s)?)|(number (of )?decimal(s)? (is )?\d+)`,
 }
 
 func FindMathOperation(entry string) string {
@@ -219,12 +376,6 @@ func MathReplacer(locale, entry, response, _ string) (string, string) {
 	return MathTag, fmt.Sprintf(response, result)
 }
 
-var (
-	NameGetterTag = "name getter"
-
-	NameSetterTag = "name setter"
-)
-
 func NameGetterReplacer(locale, _, response, token string) (string, string) {
 	name := GetUserInformation(token).Name
 
@@ -235,8 +386,6 @@ func NameGetterReplacer(locale, _, response, token string) (string, string) {
 
 	return NameGetterTag, fmt.Sprintf(response, name)
 }
-
-var names = SerializeNames()
 
 func SerializeNames() (names []string) {
 	namesFile := string(ReadFile("res/datasets/names.txt"))
@@ -275,13 +424,6 @@ func NameSetterReplacer(locale, entry, response, token string) (string, string) 
 	return NameSetterTag, fmt.Sprintf(response, name)
 }
 
-type Message struct {
-	Tag      string   `json:"tag"`
-	Messages []string `json:"messages"`
-}
-
-var messages = map[string][]Message{}
-
 func GetMessageu(locale, tag string) string {
 	for _, message := range messages[locale] {
 
@@ -299,8 +441,6 @@ func GetMessageu(locale, tag string) string {
 
 	return ""
 }
-
-var decimal = "\\b\\d+([\\.,]\\d+)?"
 
 func FindRangeLimits(local, entry string) ([]int, error) {
 	decimalsRegex := regexp.MustCompile(decimal)
@@ -334,8 +474,6 @@ func SearchTokens(sentence string) []string {
 	return tokenRegex.FindAllString(sentence, 2)
 }
 
-var RandomTag = "random number"
-
 func RandomNumberReplacer(locale, entry, response, _ string) (string, string) {
 	limitArr, err := FindRangeLimits(locale, entry)
 	if err != nil {
@@ -352,24 +490,6 @@ func RandomNumberReplacer(locale, entry, response, _ string) (string, string) {
 	randNum := rand.Intn((max - min)) + min
 	return RandomTag, fmt.Sprintf(response, strconv.Itoa(randNum))
 }
-
-var (
-	GenresTag = "movies genres"
-
-	MoviesTag = "movies search"
-
-	MoviesAlreadyTag = "already seen movie"
-
-	MoviesDataTag = "movies search from data"
-)
-
-type Information struct {
-	Name           string   `json:"name"`
-	MovieGenres    []string `json:"movie_genres"`
-	MovieBlacklist []string `json:"movie_blacklist"`
-}
-
-var userInformation = map[string]Information{}
 
 func ChangeUserInformation(token string, changer func(Information) Information) {
 	userInformation[token] = changer(userInformation[token])
@@ -433,22 +553,6 @@ func LevenshteinContains(sentence, matching string, rate int) bool {
 	}
 
 	return false
-}
-
-var (
-	MoviesGenres = map[string][]string{
-		"en": {
-			"Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama", "Fantasy",
-			"Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western",
-		},
-	}
-	movies = SerializeMovies()
-)
-
-type Movie struct {
-	Name   string
-	Genres []string
-	Rating float64
 }
 
 func SerializeMovies() (movies []Movie) {
@@ -719,10 +823,6 @@ func ArticleCountries(name string) string {
 	return name
 }
 
-const adviceURL = "https://api.adviceslip.com/advice"
-
-var AdvicesTag = "advices"
-
 func AdvicesReplacer(locale, entry, response, _ string) (string, string) {
 
 	resp, err := http.Get(adviceURL)
@@ -746,53 +846,8 @@ func AdvicesReplacer(locale, entry, response, _ string) (string, string) {
 	return AdvicesTag, fmt.Sprintf(response, advice)
 }
 
-type Rule func(string, string) time.Time
-
-var rules []Rule
-
 func RegisterRule(rule Rule) {
 	rules = append(rules, rule)
-}
-
-const day = time.Hour * 24
-
-var RuleTranslations = map[string]RuleTranslation{
-	"en": {
-		DaysOfWeek: []string{
-			"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
-		},
-		Months: []string{
-			"january", "february", "march", "april", "may", "june", "july",
-			"august", "september", "october", "november", "december",
-		},
-		RuleToday:         `today|tonight`,
-		RuleTomorrow:      `(after )?tomorrow`,
-		RuleAfterTomorrow: "after",
-		RuleDayOfWeek:     `(next )?(monday|tuesday|wednesday|thursday|friday|saturday|sunday)`,
-		RuleNextDayOfWeek: "next",
-		RuleNaturalDate:   `january|february|march|april|may|june|july|august|september|october|november|december`,
-	},
-}
-
-type RuleTranslation struct {
-	DaysOfWeek        []string
-	Months            []string
-	RuleToday         string
-	RuleTomorrow      string
-	RuleAfterTomorrow string
-	RuleDayOfWeek     string
-	RuleNextDayOfWeek string
-	RuleNaturalDate   string
-}
-
-var daysOfWeek = map[string]time.Weekday{
-	"monday":    time.Monday,
-	"tuesday":   time.Tuesday,
-	"wednesday": time.Wednesday,
-	"thursday":  time.Thursday,
-	"friday":    time.Friday,
-	"saturday":  time.Saturday,
-	"sunday":    time.Sunday,
 }
 
 func RuleToday(locale, sentence string) (result time.Time) {
@@ -971,27 +1026,8 @@ func SerializeIntents(locale string) (_intents []Intent) {
 	return _intents
 }
 
-type Modulem struct {
-	Tag       string
-	Patterns  []string
-	Responses []string
-	Replacer  func(string, string, string, string) (string, string)
-	Context   string
-}
-
-var modulesm = map[string][]Modulem{}
-
 func GetModules(locale string) []Modulem {
 	return modulesm[locale]
-}
-
-var intents = map[string][]Intent{}
-
-type Intent struct {
-	Tag       string   `json:"tag"`
-	Patterns  []string `json:"patterns"`
-	Responses []string `json:"responses"`
-	Context   string   `json:"context"`
 }
 
 func SerializeModulesIntents(locale string) []Intent {
@@ -1010,11 +1046,6 @@ func SerializeModulesIntents(locale string) []Intent {
 	return intents
 }
 
-type Sentence struct {
-	Locale  string
-	Content string
-}
-
 func (sentence *Sentence) arrange() {
 
 	punctuationRegex := regexp.MustCompile(`[a-zA-Z]( )?(\.|\?|!|¿|¡)`)
@@ -1025,11 +1056,6 @@ func (sentence *Sentence) arrange() {
 
 	sentence.Content = strings.ReplaceAll(sentence.Content, "-", " ")
 	sentence.Content = strings.TrimSpace(sentence.Content)
-}
-
-type Document struct {
-	Sentence Sentence
-	Tag      string
 }
 
 func Difference(slice []string, slice2 []string) (difference []string) {
@@ -1093,18 +1119,6 @@ func (sentence Sentence) tokenize() (tokens []string) {
 	tokens = removeStopWords(sentence.Locale, tokens)
 
 	return
-}
-
-var Locales = []Locale{
-	{
-		Tag:  "en",
-		Name: "english",
-	},
-}
-
-type Locale struct {
-	Tag  string
-	Name string
 }
 
 func GetTagByName(name string) string {
@@ -1217,8 +1231,6 @@ func TrainData(locale string) (inputs, outputs [][]float64) {
 	return inputs, outputs
 }
 
-type Matrix [][]float64
-
 func CreateMatrix(rows, columns int) (matrix Matrix) {
 	matrix = make(Matrix, rows)
 
@@ -1244,17 +1256,6 @@ func RandomMatrix(rows, columns int) (matrix Matrix) {
 	}
 
 	return
-}
-
-type Network struct {
-	Layers  []Matrix
-	Weights []Matrix
-	Biases  []Matrix
-	Output  Matrix
-	Rate    float64
-	Errors  []float64
-	Time    float64
-	Locale  string
 }
 
 func Rows(matrix Matrix) int {
@@ -1395,11 +1396,6 @@ func (network *Network) FeedForward() {
 
 		network.Layers[i+1] = productMatrix
 	}
-}
-
-type Derivative struct {
-	Delta      Matrix
-	Adjustment Matrix
 }
 
 func Differencen(matrix, matrix2 Matrix) (resultMatrix Matrix) {
