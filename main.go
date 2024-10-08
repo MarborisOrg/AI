@@ -16,26 +16,17 @@ func main() {
 	port := flag.String("port", "8080", "The port for the API and WebSocket.")
 	flag.Parse()
 
-	// Print the Marboris ascii text
 	marborisASCII := string(cli.ReadFile("res/marboris-ascii.txt"))
 	fmt.Println(color.FgLightGreen.Render(marborisASCII))
 
-	// Create the authentication token
 	cli.Authenticate()
 
 	for _, locale := range cli.Locales {
 		cli.SerializeMessages(locale.Tag)
 
-		trainc.CreateNeuralNetwork(
-			locale.Tag,
-			false,
-		)
-		neuralNetworks[locale.Tag] = cli.CreateNeuralNetwork(
-			locale.Tag,
-			false,
-		)
+		trainc.CreateNeuralNetwork(locale.Tag) // train data
+		neuralNetworks[locale.Tag] = cli.CreateNeuralNetwork(locale.Tag) // get data and save it
 	}
 
-	// Serves the server
 	cli.Serve(neuralNetworks, *port)
 }

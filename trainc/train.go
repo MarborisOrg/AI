@@ -1719,7 +1719,7 @@ func (network *Network) Train(iterations int) {
 	fmt.Printf("The error rate is %s.\n", color.FgGreen.Render(arrangedError))
 }
 
-func CreateNeuralNetwork(locale string, ignoreTrainingFile bool) (neuralNetwork Network) {
+func CreateNeuralNetwork(locale string) (neuralNetwork Network) {
 
 	saveFile := "res/locales/" + locale + "/training.json"
 
