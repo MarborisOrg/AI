@@ -1,31 +1,30 @@
 package trainc
 
 import (
-	"encoding/json"
-
-	"github.com/tebeka/snowball"
-	"math/rand"
-	"os"
-	"regexp"
-	"sort"
-	"strings"
-
-	"fmt"
-	"github.com/gookit/color"
-
-	"errors"
-	"github.com/soudy/mathcat"
-	"gopkg.in/cheggaaa/pb.v1"
-	"io"
-	"math"
-	"net/http"
-	"strconv"
-	"time"
-
 	"bufio"
 	"encoding/csv"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
 	"log"
+	"math"
+	"math/rand"
+	"net/http"
+	"os"
 	"reflect"
+	"regexp"
+	"sort"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/tebeka/snowball"
+
+	"github.com/gookit/color"
+
+	"github.com/soudy/mathcat"
+	"gopkg.in/cheggaaa/pb.v1"
 )
 
 // ----------------------------------------------------------
@@ -130,9 +129,11 @@ var daysOfWeek = map[string]time.Weekday{
 
 // ----------------------------------------------------------
 
-const jokeURL = "https://official-joke-api.appspot.com/random_joke"
-const day = time.Hour * 24
-const adviceURL = "https://api.adviceslip.com/advice"
+const (
+	jokeURL   = "https://official-joke-api.appspot.com/random_joke"
+	day       = time.Hour * 24
+	adviceURL = "https://api.adviceslip.com/advice"
+)
 
 // ----------------------------------------------------------
 
@@ -549,7 +550,6 @@ func MathReplacer(locale, entry, response, _ string) (string, string) {
 	}
 
 	res, err := mathcat.Eval(operation)
-
 	if err != nil {
 		responseTag := "math not valid"
 		return responseTag, GetMessageu(locale, responseTag)
@@ -660,7 +660,6 @@ func FindRangeLimits(local, entry string) ([]int, error) {
 }
 
 func SearchTokens(sentence string) []string {
-
 	tokenRegex := regexp.MustCompile(`[a-z0-9]{32}`)
 
 	return tokenRegex.FindAllString(sentence, 2)
@@ -711,7 +710,6 @@ func GenresReplacer(locale, entry, response, token string) (string, string) {
 }
 
 func LevenshteinDistance(first, second string) int {
-
 	if first == "" {
 		return len(second)
 	}
@@ -738,7 +736,6 @@ func LevenshteinDistance(first, second string) int {
 func LevenshteinContains(sentence, matching string, rate int) bool {
 	words := strings.Split(sentence, " ")
 	for _, word := range words {
-
 		if LevenshteinDistance(word, matching) <= rate {
 			return true
 		}
@@ -1148,7 +1145,6 @@ func (sentence Sentence) stem() (tokenizeWords []string) {
 }
 
 func Organize(locale string) (words, classes []string, documents []Document) {
-
 	intents := append(
 		SerializeIntents(locale),
 		SerializeModulesIntents(locale)...,
@@ -1161,7 +1157,6 @@ func Organize(locale string) (words, classes []string, documents []Document) {
 			patternSentence.arrange()
 
 			for _, word := range patternSentence.stem() {
-
 				if !Contains(words, word) {
 					words = append(words, word)
 				}
@@ -1410,7 +1405,6 @@ func Multiplication(matrix, matrix2 Matrix) (resultMatrix Matrix) {
 }
 
 func Transpose(matrix Matrix) (resultMatrix Matrix) {
-
 	resultMatrix = CreateMatrix(Columns(matrix), Rows(matrix))
 
 	for i := 0; i < Rows(matrix); i++ {

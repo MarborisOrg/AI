@@ -1,33 +1,31 @@
 package cli
 
 import (
-	"encoding/json"
-	"github.com/gookit/color"
-
-	"errors"
-	"fmt"
-	"math/rand"
-	"os"
-	"sort"
-	"time"
-
-	"net/http"
-	"regexp"
-	"strings"
-
-	"github.com/soudy/mathcat"
-	"reflect"
-
 	"bufio"
 	"encoding/csv"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"log"
+	"math"
+	"math/rand"
+	"net/http"
+	"os"
+	"reflect"
+	"regexp"
+	"sort"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/gookit/color"
+
+	"github.com/soudy/mathcat"
+
 	"github.com/gorilla/websocket"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/cheggaaa/pb.v1"
-	"io"
-	"math"
-	"strconv"
-
-	"log"
 
 	"github.com/gorilla/mux"
 	"github.com/tebeka/snowball"
@@ -46,7 +44,6 @@ func Contains(slice []string, text string) bool {
 }
 
 func Difference(slice []string, slice2 []string) (difference []string) {
-
 	for i := 0; i < 2; i++ {
 		for _, s1 := range slice {
 			found := false
@@ -167,7 +164,6 @@ func GetUserInformation(token string) Information {
 }
 
 func CreateNeuralNetwork(locale string) (neuralNetwork Network) {
-
 	saveFile := "res/locales/" + locale + "/training.json"
 
 	_, err := os.Open(saveFile)
@@ -365,7 +361,6 @@ func Multiplication(matrix, matrix2 Matrix) (resultMatrix Matrix) {
 }
 
 func Transpose(matrix Matrix) (resultMatrix Matrix) {
-
 	resultMatrix = CreateMatrix(Columns(matrix), Rows(matrix))
 
 	for i := 0; i < Rows(matrix); i++ {
@@ -493,7 +488,6 @@ func (network *Network) FeedBackward() {
 }
 
 func (network *Network) ComputeError() float64 {
-
 	network.FeedForward()
 	lastLayer := network.Layers[len(network.Layers)-1]
 	errors := Differencen(network.Output, lastLayer)
@@ -511,7 +505,6 @@ func (network *Network) ComputeError() float64 {
 }
 
 func (network *Network) Train(iterations int) {
-
 	start := time.Now()
 
 	bar := pb.New(iterations).Postfix(fmt.Sprintf(
@@ -640,7 +633,6 @@ func (sentence Sentence) Calculate(cache gocache.Cache, neuralNetwork Network, t
 }
 
 func LogResults(locale, entry string, results []Result) {
-
 	if os.Getenv("NO_LOGS") == "1" {
 		return
 	}
@@ -725,7 +717,6 @@ func GetIntentByTag(tag, locale string) Intent {
 }
 
 func Organize(locale string) (words, classes []string, documents []Document) {
-
 	intents := append(
 		SerializeIntents(locale),
 		SerializeModulesIntents(locale)...,
@@ -738,7 +729,6 @@ func Organize(locale string) (words, classes []string, documents []Document) {
 			patternSentence.arrange()
 
 			for _, word := range patternSentence.stem() {
-
 				if !Contains(words, word) {
 					words = append(words, word)
 				}
@@ -760,7 +750,6 @@ func Organize(locale string) (words, classes []string, documents []Document) {
 }
 
 func (sentence *Sentence) arrange() {
-
 	punctuationRegex := regexp.MustCompile(`[a-zA-Z]( )?(\.|\?|!|¿|¡)`)
 	sentence.Content = punctuationRegex.ReplaceAllStringFunc(sentence.Content, func(s string) string {
 		punctuation := regexp.MustCompile(`(\.|\?|!)`)
@@ -772,7 +761,6 @@ func (sentence *Sentence) arrange() {
 }
 
 func removeStopWords(locale string, words []string) []string {
-
 	if len(words) <= 4 {
 		return words
 	}
@@ -782,7 +770,6 @@ func removeStopWords(locale string, words []string) []string {
 	var wordsToRemove []string
 
 	for _, stopWord := range strings.Split(stopWords, "\n") {
-
 		for _, word := range words {
 
 			if !strings.Contains(stopWord, word) {
@@ -797,7 +784,6 @@ func removeStopWords(locale string, words []string) []string {
 }
 
 func (sentence Sentence) tokenize() (tokens []string) {
-
 	tokens = strings.Fields(sentence.Content)
 
 	for i, token := range tokens {
@@ -876,8 +862,7 @@ func GetCoverage(writer http.ResponseWriter, _ *http.Request) {
 	writer.Header().Set("Access-Control-Allow-Headers", allowedHeaders)
 	writer.Header().Set("Access-Control-Expose-Headers", "Authorization")
 
-	defaultMessages, defaultIntents, defaultModules =
-		GetMessages("en"), GetIntentsa("en"), GetModules("en")
+	defaultMessages, defaultIntents, defaultModules = GetMessages("en"), GetIntentsa("en"), GetModules("en")
 
 	var coverage []LocaleCoverage
 
@@ -1046,7 +1031,6 @@ func SaveHash(hash string) {
 }
 
 func Authenticate() {
-
 	if AuthenticationFileExists() {
 		authenticationHash = ReadFile(fileName)
 		return
@@ -1219,7 +1203,6 @@ func GetDashboardData(w http.ResponseWriter, r *http.Request) {
 
 func GetLayers(locale string) Layers {
 	return Layers{
-
 		InputNodes: Rows(neuralNetworks[locale].Layers[0]),
 
 		HiddenLayers: len(neuralNetworks[locale].Layers) - 2,
@@ -1229,7 +1212,6 @@ func GetLayers(locale string) Layers {
 }
 
 func GetTraining(locale string) Training {
-
 	return Training{
 		Rate:   neuralNetworks[locale].Rate,
 		Errors: neuralNetworks[locale].Errors,
@@ -1244,7 +1226,6 @@ var (
 )
 
 func Serve(_neuralNetworks map[string]Network, port string) {
-
 	neuralNetworks = _neuralNetworks // require
 
 	router := mux.NewRouter()
@@ -1372,7 +1353,6 @@ func Reply(request RequestMessage) []byte {
 
 func init() {
 	RegisterModules("en", []Modulem{
-
 		{
 			Tag: AreaTag,
 			Patterns: []string{
@@ -1699,7 +1679,6 @@ const adviceURL = "https://api.adviceslip.com/advice"
 var AdvicesTag = "advices"
 
 func AdvicesReplacer(locale, entry, response, _ string) (string, string) {
-
 	resp, err := http.Get(adviceURL)
 	if err != nil {
 		responseTag := "no advices"
@@ -1782,7 +1761,6 @@ type Joke struct {
 }
 
 func JokesReplacer(locale, entry, response, _ string) (string, string) {
-
 	resp, err := http.Get(jokeURL)
 	if err != nil {
 		responseTag := "no jokes"
@@ -1821,7 +1799,6 @@ func MathReplacer(locale, entry, response, _ string) (string, string) {
 	}
 
 	res, err := mathcat.Eval(operation)
-
 	if err != nil {
 		responseTag := "math not valid"
 		return responseTag, GetMessageu(locale, responseTag)
@@ -1933,7 +1910,6 @@ func MovieSearchReplacer(locale, entry, response, token string) (string, string)
 }
 
 func MovieSearchFromInformationReplacer(locale, _, response, token string) (string, string) {
-
 	genres := GetUserInformation(token).MovieGenres
 	if len(genres) == 0 {
 		responseTag := "no genres saved"
@@ -2033,7 +2009,6 @@ func SearchTime(locale, sentence string) (string, time.Time) {
 }
 
 func DeleteDates(locale, sentence string) string {
-
 	datePatterns := regexp.MustCompile(PatternTranslation[locale].DateRegex)
 
 	sentence = datePatterns.ReplaceAllString(sentence, "")
@@ -2042,7 +2017,6 @@ func DeleteDates(locale, sentence string) string {
 }
 
 func DeleteTimes(locale, sentence string) string {
-
 	timePatterns := regexp.MustCompile(PatternTranslation[locale].TimeRegex)
 
 	sentence = timePatterns.ReplaceAllString(sentence, "")
@@ -2100,7 +2074,6 @@ var daysOfWeek = map[string]time.Weekday{
 }
 
 func init() {
-
 	RegisterRule(RuleToday)
 	RegisterRule(RuleTomorrow)
 	RegisterRule(RuleDayOfWeek)
@@ -2273,7 +2246,6 @@ func RuleTime(sentence string) time.Time {
 }
 
 func LevenshteinDistance(first, second string) int {
-
 	if first == "" {
 		return len(second)
 	}
@@ -2300,7 +2272,6 @@ func LevenshteinDistance(first, second string) int {
 func LevenshteinContains(sentence, matching string, rate int) bool {
 	words := strings.Split(sentence, " ")
 	for _, word := range words {
-
 		if LevenshteinDistance(word, matching) <= rate {
 			return true
 		}
@@ -2385,7 +2356,6 @@ func FindRangeLimits(local, entry string) ([]int, error) {
 }
 
 func SearchTokens(sentence string) []string {
-
 	tokenRegex := regexp.MustCompile(`[a-z0-9]{32}`)
 
 	return tokenRegex.FindAllString(sentence, 2)

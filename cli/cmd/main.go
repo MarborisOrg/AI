@@ -188,7 +188,7 @@ func SetupConfig(fileName string) *Configuration {
 		return &config
 	}
 
-	if err := os.WriteFile(fileName, fileData, 0644); err != nil {
+	if err := os.WriteFile(fileName, fileData, 0o644); err != nil {
 		writeLog(fmt.Sprintf("Error writing config file: %v", err))
 	}
 	return &config
@@ -203,7 +203,7 @@ func logWriter() {
 	var err error
 
 	// Open the log file outside the loop
-	f, err = os.OpenFile(logFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err = os.OpenFile(logFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
 	if err != nil {
 		fmt.Printf("Could not open log file: %v\n", err)
 		return
