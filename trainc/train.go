@@ -29,8 +29,11 @@ import (
 )
 
 // ----------------------------------------------------------
+
 var AreaTag = "area"
+
 var JokesTag = "jokes"
+
 var CurrencyTag = "currency"
 
 var (
@@ -38,6 +41,7 @@ var (
 
 	ArticleCountriesm = map[string]func(string) string{}
 )
+
 var countries = SerializeCountries()
 
 var messages = map[string][]Message{}
@@ -111,7 +115,9 @@ var names = SerializeNames()
 var decimal = "\\b\\d+([\\.,]\\d+)?"
 
 var RandomTag = "random number"
+
 var AdvicesTag = "advices"
+
 var daysOfWeek = map[string]time.Weekday{
 	"monday":    time.Monday,
 	"tuesday":   time.Tuesday,
@@ -123,6 +129,7 @@ var daysOfWeek = map[string]time.Weekday{
 }
 
 // ----------------------------------------------------------
+
 const jokeURL = "https://official-joke-api.appspot.com/random_joke"
 const day = time.Hour * 24
 const adviceURL = "https://api.adviceslip.com/advice"
@@ -203,6 +210,7 @@ type Locale struct {
 	Tag  string
 	Name string
 }
+
 type Matrix [][]float64
 
 type Network struct {
@@ -222,6 +230,191 @@ type Derivative struct {
 }
 
 // ----------------------------------------------------------
+
+func init() {
+	RegisterModules("en", []Modulem{
+		{
+			Tag: AreaTag,
+			Patterns: []string{
+				"What is the area of ",
+				"Give me the area of ",
+			},
+			Responses: []string{
+				"The area of %s is %gkm²",
+			},
+			Replacer: AreaReplacer,
+		},
+
+		{
+			Tag: CapitalTag,
+			Patterns: []string{
+				"What is the capital of ",
+				"What's the capital of ",
+				"Give me the capital of ",
+			},
+			Responses: []string{
+				"The capital of %s is %s",
+			},
+			Replacer: CapitalReplacer,
+		},
+
+		{
+			Tag: CurrencyTag,
+			Patterns: []string{
+				"Which currency is used in ",
+				"Give me the used currency of ",
+				"Give me the currency of ",
+				"What is the currency of ",
+			},
+			Responses: []string{
+				"The currency of %s is %s",
+			},
+			Replacer: CurrencyReplacer,
+		},
+
+		{
+			Tag: MathTag,
+			Patterns: []string{
+				"Give me the result of ",
+				"Calculate ",
+			},
+			Responses: []string{
+				"The result is %s",
+				"That makes %s",
+			},
+			Replacer: MathReplacer,
+		},
+
+		{
+			Tag: GenresTag,
+			Patterns: []string{
+				"My favorite movie genres are Comedy, Horror",
+				"I like the Comedy, Horror genres",
+				"I like movies about War",
+				"I like Action movies",
+			},
+			Responses: []string{
+				"Great choices! I saved this movie genre information to your client.",
+				"Understood, I saved this movie genre information to your client.",
+			},
+			Replacer: GenresReplacer,
+		},
+
+		{
+			Tag: MoviesTag,
+			Patterns: []string{
+				"Find me a movie about",
+				"Give me a movie about",
+				"Find me a film about",
+			},
+			Responses: []string{
+				"I found the movie “%s” for you, which is rated %.02f/5",
+				"Sure, I found this movie “%s”, which is rated %.02f/5",
+			},
+			Replacer: MovieSearchReplacer,
+		},
+
+		{
+			Tag: MoviesAlreadyTag,
+			Patterns: []string{
+				"I already saw this movie",
+				"I have already watched this film",
+				"Oh I have already watched this movie",
+				"I have already seen this movie",
+			},
+			Responses: []string{
+				"Oh I see, here's another one “%s” which is rated %.02f/5",
+			},
+			Replacer: MovieSearchReplacer,
+		},
+
+		{
+			Tag: MoviesDataTag,
+			Patterns: []string{
+				"I'm bored",
+				"I don't know what to do",
+			},
+			Responses: []string{
+				"I propose you watch the %s movie “%s”, which is rated %.02f/5",
+			},
+			Replacer: MovieSearchFromInformationReplacer,
+		},
+
+		{
+			Tag: NameGetterTag,
+			Patterns: []string{
+				"Do you know my name?",
+			},
+			Responses: []string{
+				"Your name is %s!",
+			},
+			Replacer: NameGetterReplacer,
+		},
+
+		{
+			Tag: NameSetterTag,
+			Patterns: []string{
+				"My name is ",
+				"You can call me ",
+			},
+			Responses: []string{
+				"Great! Hi %s",
+			},
+			Replacer: NameSetterReplacer,
+		},
+
+		{
+			Tag: RandomTag,
+			Patterns: []string{
+				"Give me a random number",
+				"Generate a random number",
+			},
+			Responses: []string{
+				"The number is %s",
+			},
+			Replacer: RandomNumberReplacer,
+		},
+
+		{
+			Tag: JokesTag,
+			Patterns: []string{
+				"Tell me a joke",
+				"Make me laugh",
+			},
+			Responses: []string{
+				"Here you go, %s",
+				"Here's one, %s",
+			},
+			Replacer: JokesReplacer,
+		},
+		{
+			Tag: AdvicesTag,
+			Patterns: []string{
+				"Give me an advice",
+				"Advise me",
+			},
+			Responses: []string{
+				"Here you go, %s",
+				"Here's one, %s",
+				"Listen closely, %s",
+			},
+			Replacer: AdvicesReplacer,
+		},
+	})
+
+	ArticleCountriesm["en"] = ArticleCountries
+}
+
+func init() {
+	RegisterRule(RuleToday)
+	RegisterRule(RuleTomorrow)
+	RegisterRule(RuleDayOfWeek)
+	RegisterRule(RuleNaturalDate)
+	RegisterRule(RuleDate)
+}
+
+// ----------------------------------------------------------
+
 func GetUserInformation(token string) Information {
 	return userInformation[token]
 }
@@ -297,7 +490,6 @@ func CurrencyReplacer(locale, entry, response, _ string) (string, string) {
 }
 
 func JokesReplacer(locale, entry, response, _ string) (string, string) {
-
 	resp, err := http.Get(jokeURL)
 	if err != nil {
 		responseTag := "no jokes"
@@ -607,7 +799,6 @@ func MovieSearchReplacer(locale, entry, response, token string) (string, string)
 }
 
 func MovieSearchFromInformationReplacer(locale, _, response, token string) (string, string) {
-
 	genres := GetUserInformation(token).MovieGenres
 	if len(genres) == 0 {
 		responseTag := "no genres saved"
@@ -640,181 +831,6 @@ func SearchMovie(genre, userToken string) (output Movie) {
 	return
 }
 
-func init() {
-	RegisterModules("en", []Modulem{
-
-		{
-			Tag: AreaTag,
-			Patterns: []string{
-				"What is the area of ",
-				"Give me the area of ",
-			},
-			Responses: []string{
-				"The area of %s is %gkm²",
-			},
-			Replacer: AreaReplacer,
-		},
-
-		{
-			Tag: CapitalTag,
-			Patterns: []string{
-				"What is the capital of ",
-				"What's the capital of ",
-				"Give me the capital of ",
-			},
-			Responses: []string{
-				"The capital of %s is %s",
-			},
-			Replacer: CapitalReplacer,
-		},
-
-		{
-			Tag: CurrencyTag,
-			Patterns: []string{
-				"Which currency is used in ",
-				"Give me the used currency of ",
-				"Give me the currency of ",
-				"What is the currency of ",
-			},
-			Responses: []string{
-				"The currency of %s is %s",
-			},
-			Replacer: CurrencyReplacer,
-		},
-
-		{
-			Tag: MathTag,
-			Patterns: []string{
-				"Give me the result of ",
-				"Calculate ",
-			},
-			Responses: []string{
-				"The result is %s",
-				"That makes %s",
-			},
-			Replacer: MathReplacer,
-		},
-
-		{
-			Tag: GenresTag,
-			Patterns: []string{
-				"My favorite movie genres are Comedy, Horror",
-				"I like the Comedy, Horror genres",
-				"I like movies about War",
-				"I like Action movies",
-			},
-			Responses: []string{
-				"Great choices! I saved this movie genre information to your client.",
-				"Understood, I saved this movie genre information to your client.",
-			},
-			Replacer: GenresReplacer,
-		},
-
-		{
-			Tag: MoviesTag,
-			Patterns: []string{
-				"Find me a movie about",
-				"Give me a movie about",
-				"Find me a film about",
-			},
-			Responses: []string{
-				"I found the movie “%s” for you, which is rated %.02f/5",
-				"Sure, I found this movie “%s”, which is rated %.02f/5",
-			},
-			Replacer: MovieSearchReplacer,
-		},
-
-		{
-			Tag: MoviesAlreadyTag,
-			Patterns: []string{
-				"I already saw this movie",
-				"I have already watched this film",
-				"Oh I have already watched this movie",
-				"I have already seen this movie",
-			},
-			Responses: []string{
-				"Oh I see, here's another one “%s” which is rated %.02f/5",
-			},
-			Replacer: MovieSearchReplacer,
-		},
-
-		{
-			Tag: MoviesDataTag,
-			Patterns: []string{
-				"I'm bored",
-				"I don't know what to do",
-			},
-			Responses: []string{
-				"I propose you watch the %s movie “%s”, which is rated %.02f/5",
-			},
-			Replacer: MovieSearchFromInformationReplacer,
-		},
-
-		{
-			Tag: NameGetterTag,
-			Patterns: []string{
-				"Do you know my name?",
-			},
-			Responses: []string{
-				"Your name is %s!",
-			},
-			Replacer: NameGetterReplacer,
-		},
-
-		{
-			Tag: NameSetterTag,
-			Patterns: []string{
-				"My name is ",
-				"You can call me ",
-			},
-			Responses: []string{
-				"Great! Hi %s",
-			},
-			Replacer: NameSetterReplacer,
-		},
-
-		{
-			Tag: RandomTag,
-			Patterns: []string{
-				"Give me a random number",
-				"Generate a random number",
-			},
-			Responses: []string{
-				"The number is %s",
-			},
-			Replacer: RandomNumberReplacer,
-		},
-
-		{
-			Tag: JokesTag,
-			Patterns: []string{
-				"Tell me a joke",
-				"Make me laugh",
-			},
-			Responses: []string{
-				"Here you go, %s",
-				"Here's one, %s",
-			},
-			Replacer: JokesReplacer,
-		},
-		{
-			Tag: AdvicesTag,
-			Patterns: []string{
-				"Give me an advice",
-				"Advise me",
-			},
-			Responses: []string{
-				"Here you go, %s",
-				"Here's one, %s",
-				"Listen closely, %s",
-			},
-			Replacer: AdvicesReplacer,
-		},
-	})
-
-	ArticleCountriesm["en"] = ArticleCountries
-}
-
 func ArticleCountries(name string) string {
 	if name == "United States" {
 		return "the " + name
@@ -824,7 +840,6 @@ func ArticleCountries(name string) string {
 }
 
 func AdvicesReplacer(locale, entry, response, _ string) (string, string) {
-
 	resp, err := http.Get(adviceURL)
 	if err != nil {
 		responseTag := "no advices"
@@ -934,7 +949,6 @@ func RuleNaturalDate(locale, sentence string) time.Time {
 	}
 
 	if day == "" {
-
 		calculatedMonth := parsedMonth.Month() - time.Now().Month()
 
 		if calculatedMonth <= 0 {
@@ -977,15 +991,6 @@ func RuleDate(locale, sentence string) time.Time {
 	}
 
 	return parsedDate
-}
-
-func init() {
-
-	RegisterRule(RuleToday)
-	RegisterRule(RuleTomorrow)
-	RegisterRule(RuleDayOfWeek)
-	RegisterRule(RuleNaturalDate)
-	RegisterRule(RuleDate)
 }
 
 func Contains(slice []string, text string) bool {
@@ -1047,7 +1052,6 @@ func SerializeModulesIntents(locale string) []Intent {
 }
 
 func (sentence *Sentence) arrange() {
-
 	punctuationRegex := regexp.MustCompile(`[a-zA-Z]( )?(\.|\?|!|¿|¡)`)
 	sentence.Content = punctuationRegex.ReplaceAllStringFunc(sentence.Content, func(s string) string {
 		punctuation := regexp.MustCompile(`(\.|\?|!)`)
@@ -1059,7 +1063,6 @@ func (sentence *Sentence) arrange() {
 }
 
 func Difference(slice []string, slice2 []string) (difference []string) {
-
 	for i := 0; i < 2; i++ {
 		for _, s1 := range slice {
 			found := false
@@ -1069,47 +1072,35 @@ func Difference(slice []string, slice2 []string) (difference []string) {
 					break
 				}
 			}
-
 			if !found {
 				difference = append(difference, s1)
 			}
 		}
-
 		if i == 0 {
 			slice, slice2 = slice2, slice
 		}
 	}
-
 	return difference
 }
 
 func removeStopWords(locale string, words []string) []string {
-
 	if len(words) <= 4 {
 		return words
 	}
-
 	stopWords := string(ReadFile("res/locales/" + locale + "/stopwords.txt"))
-
 	var wordsToRemove []string
-
 	for _, stopWord := range strings.Split(stopWords, "\n") {
-
 		for _, word := range words {
-
 			if !strings.Contains(stopWord, word) {
 				continue
 			}
-
 			wordsToRemove = append(wordsToRemove, word)
 		}
 	}
-
 	return Difference(words, wordsToRemove)
 }
 
 func (sentence Sentence) tokenize() (tokens []string) {
-
 	tokens = strings.Fields(sentence.Content)
 
 	for i, token := range tokens {
@@ -1512,7 +1503,6 @@ func (network *Network) FeedBackward() {
 }
 
 func (network *Network) ComputeError() float64 {
-
 	network.FeedForward()
 	lastLayer := network.Layers[len(network.Layers)-1]
 	errors := Differencen(network.Output, lastLayer)
@@ -1530,7 +1520,6 @@ func (network *Network) ComputeError() float64 {
 }
 
 func (network *Network) Train(iterations int) {
-
 	start := time.Now()
 
 	bar := pb.New(iterations).Postfix(fmt.Sprintf(
@@ -1571,11 +1560,9 @@ func (network *Network) Train(iterations int) {
 }
 
 func CreateNeuralNetwork(locale string) (neuralNetwork Network) {
-
 	saveFile := "res/locales/" + locale + "/training.json"
 
 	inputs, outputs := TrainData(locale)
-
 	neuralNetwork = CreateNetwork(locale, 0.1, inputs, outputs, 50)
 	neuralNetwork.Train(200)
 
