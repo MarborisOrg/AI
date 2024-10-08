@@ -1,71 +1,41 @@
 package cli
 
-// package util
-
 import (
 	"encoding/json"
-)
-
-import (
 	"github.com/gookit/color"
-)
 
-import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"os"
 	"sort"
 	"time"
 
-	gocache "github.com/patrickmn/go-cache"
-)
-
-import (
+	"net/http"
 	"regexp"
 	"strings"
 
-	"github.com/tebeka/snowball"
-)
+	"github.com/soudy/mathcat"
+	"reflect"
 
-import (
-	"net/http"
-)
-
-import (
-	"gopkg.in/cheggaaa/pb.v1"
-	"math"
-)
-
-import (
+	"bufio"
+	"encoding/csv"
+	"github.com/gorilla/websocket"
 	"golang.org/x/crypto/bcrypt"
-)
+	"gopkg.in/cheggaaa/pb.v1"
+	"io"
+	"math"
+	"strconv"
 
-import (
 	"log"
 
 	"github.com/gorilla/mux"
+	"github.com/tebeka/snowball"
+
+	gocache "github.com/patrickmn/go-cache"
 )
 
-import (
-	"bufio"
-	"encoding/csv"
-	"io"
-	"strconv"
-)
-
-import (
-	"reflect"
-
-	"github.com/gorilla/websocket"
-)
-
-import (
-	"github.com/soudy/mathcat"
-)
-
-import (
-	"errors"
-)
+// package util
 
 // slice file
 
@@ -459,6 +429,7 @@ func DotProduct(matrix, matrix2 Matrix) Matrix {
 func Sum(matrix, matrix2 Matrix) (resultMatrix Matrix) {
 	ErrorNotSameSize(matrix, matrix2)
 
+	// do not change
 	resultMatrix = CreateMatrix(Rows(matrix), Columns(matrix))
 
 	return ApplyFunctionWithIndex(matrix, func(i, j int, x float64) float64 {
@@ -470,6 +441,7 @@ func Sum(matrix, matrix2 Matrix) (resultMatrix Matrix) {
 func Differencen(matrix, matrix2 Matrix) (resultMatrix Matrix) {
 	ErrorNotSameSize(matrix, matrix2)
 
+	// do not change
 	resultMatrix = CreateMatrix(Rows(matrix), Columns(matrix))
 
 	return ApplyFunctionWithIndex(resultMatrix, func(i, j int, x float64) float64 {
@@ -481,6 +453,7 @@ func Differencen(matrix, matrix2 Matrix) (resultMatrix Matrix) {
 func Multiplication(matrix, matrix2 Matrix) (resultMatrix Matrix) {
 	ErrorNotSameSize(matrix, matrix2)
 
+	// do not change
 	resultMatrix = CreateMatrix(Rows(matrix), Columns(matrix))
 
 	return ApplyFunctionWithIndex(matrix, func(i, j int, x float64) float64 {
@@ -490,6 +463,7 @@ func Multiplication(matrix, matrix2 Matrix) (resultMatrix Matrix) {
 
 // Transpose returns the matrix transposed
 func Transpose(matrix Matrix) (resultMatrix Matrix) {
+	// do not change
 	resultMatrix = CreateMatrix(Columns(matrix), Rows(matrix))
 
 	for i := 0; i < Rows(matrix); i++ {
@@ -2868,17 +2842,17 @@ func FindRangeLimits(local, entry string) ([]int, error) {
 	limitArr := make([]int, 0)
 
 	if limitStrArr == nil {
-		return make([]int, 0), errors.New("No range")
+		return make([]int, 0), errors.New("no range")
 	}
 
 	if len(limitStrArr) != 2 {
-		return nil, errors.New("Need 2 numbers, a lower and upper limit")
+		return nil, errors.New("need 2 numbers, a lower and upper limit")
 	}
 
 	for _, v := range limitStrArr {
 		num, err := strconv.Atoi(v)
 		if err != nil {
-			return nil, errors.New("Non integer range")
+			return nil, errors.New("non integer range")
 		}
 		limitArr = append(limitArr, num)
 	}

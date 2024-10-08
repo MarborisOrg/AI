@@ -13,7 +13,6 @@ var neuralNetworks = map[string]cli.Network{}
 
 func main() {
 	port := flag.String("port", "8080", "The port for the API and WebSocket.")
-	/*localesFlag := flag.String("re-train", "", "The locale(s) to re-train.")*/
 	flag.Parse()
 
 	// Print the Marboris ascii text
