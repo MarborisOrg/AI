@@ -659,12 +659,6 @@ func FindRangeLimits(local, entry string) ([]int, error) {
 	return limitArr, nil
 }
 
-func SearchTokens(sentence string) []string {
-	tokenRegex := regexp.MustCompile(`[a-z0-9]{32}`)
-
-	return tokenRegex.FindAllString(sentence, 2)
-}
-
 func RandomNumberReplacer(locale, entry, response, _ string) (string, string) {
 	limitArr, err := FindRangeLimits(locale, entry)
 	if err != nil {
@@ -1284,23 +1278,6 @@ func CreateNetwork(locale string, rate float64, input, output Matrix, hiddensNod
 		Rate:    rate,
 		Locale:  locale,
 	}
-}
-
-func LoadNetwork(fileName string) *Network {
-	inF, err := os.Open(fileName)
-	if err != nil {
-		panic("Failed to load " + fileName + ".")
-	}
-	defer inF.Close()
-
-	decoder := json.NewDecoder(inF)
-	neuralNetwork := &Network{}
-	err = decoder.Decode(neuralNetwork)
-	if err != nil {
-		panic(err)
-	}
-
-	return neuralNetwork
 }
 
 func (network Network) Save(fileName string) {

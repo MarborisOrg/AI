@@ -258,19 +258,6 @@ func SubtractsOne(x float64) float64 {
 
 type Matrix [][]float64
 
-func RandomMatrix(rows, columns int) (matrix Matrix) {
-	matrix = make(Matrix, rows)
-
-	for i := 0; i < rows; i++ {
-		matrix[i] = make([]float64, columns)
-		for j := 0; j < columns; j++ {
-			matrix[i][j] = rand.Float64()*2.0 - 1.0
-		}
-	}
-
-	return
-}
-
 func CreateMatrix(rows, columns int) (matrix Matrix) {
 	matrix = make(Matrix, rows)
 
@@ -404,44 +391,6 @@ func LoadNetwork(fileName string) *Network {
 	}
 
 	return neuralNetwork
-}
-
-func CreateNetwork(locale string, rate float64, input, output Matrix, hiddensNodes ...int) Network {
-	input = append([][]float64{
-		make([]float64, len(input[0])),
-	}, input...)
-	output = append([][]float64{
-		make([]float64, len(output[0])),
-	}, output...)
-
-	inputMatrix := input
-	layers := []Matrix{inputMatrix}
-
-	for _, hiddenNodes := range hiddensNodes {
-		layers = append(layers, CreateMatrix(len(input), hiddenNodes))
-	}
-
-	layers = append(layers, output)
-
-	weightsNumber := len(layers) - 1
-	var weights []Matrix
-	var biases []Matrix
-
-	for i := 0; i < weightsNumber; i++ {
-		rows, columns := Columns(layers[i]), Columns(layers[i+1])
-
-		weights = append(weights, RandomMatrix(rows, columns))
-		biases = append(biases, RandomMatrix(Rows(layers[i]), columns))
-	}
-
-	return Network{
-		Layers:  layers,
-		Weights: weights,
-		Biases:  biases,
-		Output:  output,
-		Rate:    rate,
-		Locale:  locale,
-	}
 }
 
 func (network Network) Save(fileName string) {
@@ -1654,14 +1603,6 @@ var (
 	message  string
 )
 
-func RegisterModuless(module Modules) {
-	moduless = append(moduless, module)
-}
-
-func SetMessage(_message string) {
-	message = _message
-}
-
 func GetMessage() string {
 	return message
 }
@@ -1827,10 +1768,6 @@ type Modulem struct {
 
 var modulesm = map[string][]Modulem{}
 
-func RegisterModule(locale string, module Modulem) {
-	modulesm[locale] = append(modulesm[locale], module)
-}
-
 func RegisterModules(locale string, _modules []Modulem) {
 	modulesm[locale] = append(modulesm[locale], _modules...)
 }
@@ -1985,43 +1922,6 @@ var PatternTranslation = map[string]PatternTranslations{
 type PatternTranslations struct {
 	DateRegex string
 	TimeRegex string
-}
-
-func SearchTime(locale, sentence string) (string, time.Time) {
-	_time := RuleTime(sentence)
-
-	if _time == (time.Time{}) {
-		_time = time.Date(0, 0, 0, 12, 0, 0, 0, time.UTC)
-	}
-
-	for _, rule := range rules {
-		date := rule(locale, sentence)
-
-		if date != (time.Time{}) {
-			date = time.Date(date.Year(), date.Month(), date.Day(), _time.Hour(), _time.Minute(), 0, 0, time.UTC)
-
-			sentence = DeleteTimes(locale, sentence)
-			return DeleteDates(locale, sentence), date
-		}
-	}
-
-	return sentence, time.Now().Add(time.Hour * 24)
-}
-
-func DeleteDates(locale, sentence string) string {
-	datePatterns := regexp.MustCompile(PatternTranslation[locale].DateRegex)
-
-	sentence = datePatterns.ReplaceAllString(sentence, "")
-
-	return strings.TrimSpace(sentence)
-}
-
-func DeleteTimes(locale, sentence string) string {
-	timePatterns := regexp.MustCompile(PatternTranslation[locale].TimeRegex)
-
-	sentence = timePatterns.ReplaceAllString(sentence, "")
-
-	return strings.TrimSpace(sentence)
 }
 
 type Rule func(string, string) time.Time
@@ -2210,41 +2110,6 @@ func RuleDate(locale, sentence string) time.Time {
 	return parsedDate
 }
 
-func RuleTime(sentence string) time.Time {
-	timeRegex := regexp.MustCompile(`(\d{2}|\d)(:\d{2}|\d)?( )?(pm|am|p\.m|a\.m)`)
-	foundTime := timeRegex.FindString(sentence)
-
-	if foundTime == "" {
-		return time.Time{}
-	}
-
-	var part string
-	if strings.Contains(foundTime, "pm") || strings.Contains(foundTime, "p.m") {
-		part = "pm"
-	} else if strings.Contains(foundTime, "am") || strings.Contains(foundTime, "a.m") {
-		part = "am"
-	}
-
-	if strings.Contains(foundTime, ":") {
-
-		hoursAndMinutesRegex := regexp.MustCompile(`(\d{2}|\d):(\d{2}|\d)`)
-		timeVariables := strings.Split(hoursAndMinutesRegex.FindString(foundTime), ":")
-
-		formattedTime := fmt.Sprintf("%02s:%02s %s", timeVariables[0], timeVariables[1], part)
-		response, _ := time.Parse("03:04 pm", formattedTime)
-
-		return response
-	}
-
-	digitsRegex := regexp.MustCompile(`\d{2}|\d`)
-	foundDigits := digitsRegex.FindString(foundTime)
-
-	formattedTime := fmt.Sprintf("%02s %s", foundDigits, part)
-	response, _ := time.Parse("03 pm", formattedTime)
-
-	return response
-}
-
 func LevenshteinDistance(first, second string) int {
 	if first == "" {
 		return len(second)
@@ -2353,10 +2218,4 @@ func FindRangeLimits(local, entry string) ([]int, error) {
 
 	sort.Ints(limitArr)
 	return limitArr, nil
-}
-
-func SearchTokens(sentence string) []string {
-	tokenRegex := regexp.MustCompile(`[a-z0-9]{32}`)
-
-	return tokenRegex.FindAllString(sentence, 2)
 }
