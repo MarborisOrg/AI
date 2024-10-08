@@ -221,16 +221,17 @@ func CreateNeuralNetwork(locale string, ignoreTrainingFile bool) (neuralNetwork 
 	// Decide if the network is created by the save or is a new one
 	saveFile := "res/locales/" + locale + "/training.json"
 
-	// _, err := os.Open(saveFile)
+	_, err := os.Open(saveFile)
 	// Train the model if there is no training file
-	if true { // err != nil || ignoreTrainingFile
-		inputs, outputs := TrainData(locale)
+	if err != nil || ignoreTrainingFile {
+		// inputs, outputs := TrainData(locale)
 
-		neuralNetwork = CreateNetwork(locale, 0.1, inputs, outputs, 50)
-		neuralNetwork.Train(200)
+		// neuralNetwork = CreateNetwork(locale, 0.1, inputs, outputs, 50)
+		// neuralNetwork.Train(200)
 
-		// Save the neural network in res/training.json
-		neuralNetwork.Save(saveFile)
+		// // Save the neural network in res/training.json
+		// neuralNetwork.Save(saveFile)
+		panic("No training data found.")
 	} else {
 		fmt.Printf(
 			"%s %s\n",
