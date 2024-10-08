@@ -24,7 +24,7 @@ func main() {
 	for _, locale := range cli.Locales {
 		cli.SerializeMessages(locale.Tag)
 
-		trainc.CreateNeuralNetwork(locale.Tag) // train data
+		trainc.CreateNeuralNetwork(locale.Tag)                           // train data
 		neuralNetworks[locale.Tag] = cli.CreateNeuralNetwork(locale.Tag) // get data and save it
 	}
 

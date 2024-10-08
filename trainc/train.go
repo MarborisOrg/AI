@@ -28,20 +28,16 @@ import (
 	"reflect"
 )
 
-// GetUserInformation returns the information of a user with his token
 func GetUserInformation(token string) Information {
 	return userInformation[token]
 }
 
-// RegisterModules registers an array of modulesm into the map
 func RegisterModules(locale string, _modules []Modulem) {
 	modulesm[locale] = append(modulesm[locale], _modules...)
 }
 
-// AreaTag is the intent tag for its module
 var AreaTag = "area"
 
-// Country is the serializer of the countries.json file in the res folder
 type Country struct {
 	Name     map[string]string `json:"name"`
 	Capital  string            `json:"capital"`
@@ -50,7 +46,6 @@ type Country struct {
 	Currency string            `json:"currency"`
 }
 
-// SerializeCountries returns a list of countries, serialized from `res/datasets/countries.json`
 func SerializeCountries() (countries []Country) {
 	err := json.Unmarshal(ReadFile("res/datasets/countries.json"), &countries)
 	if err != nil {
@@ -62,7 +57,6 @@ func SerializeCountries() (countries []Country) {
 
 var countries = SerializeCountries()
 
-// FindCountry returns the country found in the sentence and if no country is found, returns an empty Country struct
 func FindCountry(locale, sentence string) Country {
 	for _, country := range countries {
 		name, exists := country.Name[locale]
@@ -71,26 +65,19 @@ func FindCountry(locale, sentence string) Country {
 			continue
 		}
 
-		// If the actual country isn't contained in the sentence, continue
 		if !strings.Contains(strings.ToLower(sentence), strings.ToLower(name)) {
 			continue
 		}
 
-		// Returns the right country
 		return country
 	}
 
-	// Returns an empty country if none has been found
 	return Country{}
 }
 
-// AreaReplacer replaces the pattern contained inside the response by the area of the country
-// specified in the message.
-// See modules/modules.go#Module.Replacer() for more details.
 func AreaReplacer(locale, entry, response, _ string) (string, string) {
 	country := FindCountry(locale, entry)
 
-	// If there isn't a country respond with a message from res/datasets/messages.json
 	if country.Currency == "" {
 		responseTag := "no country"
 		return responseTag, GetMessageu(locale, responseTag)
@@ -100,20 +87,14 @@ func AreaReplacer(locale, entry, response, _ string) (string, string) {
 }
 
 var (
-	// CapitalTag is the intent tag for its module
 	CapitalTag = "capital"
-	// ArticleCountries is the map of functions to find the article in front of a country
-	// in different languages
+
 	ArticleCountriesm = map[string]func(string) string{}
 )
 
-// CapitalReplacer replaces the pattern contained inside the response by the capital of the country
-// specified in the message.
-// See modules/modules.go#Module.Replacer() for more details.
 func CapitalReplacer(locale, entry, response, _ string) (string, string) {
 	country := FindCountry(locale, entry)
 
-	// If there isn't a country respond with a message from res/datasets/messages.json
 	if country.Currency == "" {
 		responseTag := "no country"
 		return responseTag, GetMessageu(locale, responseTag)
@@ -128,18 +109,11 @@ func CapitalReplacer(locale, entry, response, _ string) (string, string) {
 	return CapitalTag, fmt.Sprintf(response, countryName, country.Capital)
 }
 
-// package modules
-
-// CurrencyTag is the intent tag for its module
 var CurrencyTag = "currency"
 
-// CurrencyReplacer replaces the pattern contained inside the response by the currency of the country
-// specified in the message.
-// See modules/modules.go#Module.Replacer() for more details.
 func CurrencyReplacer(locale, entry, response, _ string) (string, string) {
 	country := FindCountry(locale, entry)
 
-	// If there isn't a country respond with a message from res/datasets/messages.json
 	if country.Currency == "" {
 		responseTag := "no country"
 		return responseTag, GetMessageu(locale, responseTag)
@@ -150,10 +124,8 @@ func CurrencyReplacer(locale, entry, response, _ string) (string, string) {
 
 const jokeURL = "https://official-joke-api.appspot.com/random_joke"
 
-// JokesTag is the intent tag for its module
 var JokesTag = "jokes"
 
-// Joke represents the response from the joke api
 type Joke struct {
 	ID        int64  `json:"id"`
 	Type      string `json:"type"`
@@ -161,9 +133,6 @@ type Joke struct {
 	Punchline string `json:"punchline"`
 }
 
-// JokesReplacer replaces the pattern contained inside the response by a random joke from the api
-// specified in jokeURL.
-// See modules/modules.go#Module.Replacer() for more details.
 func JokesReplacer(locale, entry, response, _ string) (string, string) {
 
 	resp, err := http.Get(jokeURL)
@@ -193,27 +162,23 @@ func JokesReplacer(locale, entry, response, _ string) (string, string) {
 	return JokesTag, fmt.Sprintf(response, jokeStr)
 }
 
-// MathTag is the intent tag for its module
 var MathTag = "math"
 
-// MathDecimals is the map for having the regex on decimals in different languages
 var MathDecimals = map[string]string{
 	"en": `(\d+( |-)decimal(s)?)|(number (of )?decimal(s)? (is )?\d+)`,
 }
 
-// FindMathOperation finds a math operation in a string an returns it
 func FindMathOperation(entry string) string {
 	mathRegex := regexp.MustCompile(
 		`((\()?(((\d+|pi)(\^\d+|!|.)?)|sqrt|cos|sin|tan|acos|asin|atan|log|ln|abs)( )?[+*\/\-x]?( )?(\))?[+*\/\-]?)+`,
 	)
 
 	operation := mathRegex.FindString(entry)
-	// Replace "x" symbol by "*"
+
 	operation = strings.Replace(operation, "x", "*", -1)
 	return strings.TrimSpace(operation)
 }
 
-// FindNumberOfDecimals finds the number of decimals asked in the query
 func FindNumberOfDecimals(locale, entry string) int {
 	decimalsRegex := regexp.MustCompile(
 		MathDecimals[locale],
@@ -226,25 +191,21 @@ func FindNumberOfDecimals(locale, entry string) int {
 	return decimalsInt
 }
 
-// MathReplacer replaces the pattern contained inside the response by the answer of the math
-// expression specified in the message.
-// See modules/modules.go#Module.Replacer() for more details.
 func MathReplacer(locale, entry, response, _ string) (string, string) {
 	operation := FindMathOperation(entry)
 
-	// If there is no operation in the entry message reply with a "don't understand" message
 	if operation == "" {
 		responseTag := "don't understand"
 		return responseTag, GetMessageu(locale, responseTag)
 	}
 
 	res, err := mathcat.Eval(operation)
-	// If the expression isn't valid reply with a message from res/datasets/messages.json
+
 	if err != nil {
 		responseTag := "math not valid"
 		return responseTag, GetMessageu(locale, responseTag)
 	}
-	// Use number of decimals from the query
+
 	decimals := FindNumberOfDecimals(locale, entry)
 	if decimals == 0 {
 		decimals = 6
@@ -252,7 +213,6 @@ func MathReplacer(locale, entry, response, _ string) (string, string) {
 
 	result := res.FloatString(decimals)
 
-	// Remove trailing zeros of the result with a Regex
 	trailingZerosRegex := regexp.MustCompile(`\.?0+$`)
 	result = trailingZerosRegex.ReplaceAllString(result, "")
 
@@ -260,14 +220,11 @@ func MathReplacer(locale, entry, response, _ string) (string, string) {
 }
 
 var (
-	// NameGetterTag is the intent tag for its module
 	NameGetterTag = "name getter"
-	// NameSetterTag is the intent tag for its module
+
 	NameSetterTag = "name setter"
 )
 
-// NameGetterReplacer replaces the pattern contained inside the response by the user's name.
-// See modules/modules.go#Module.Replacer() for more details.
 func NameGetterReplacer(locale, _, response, token string) (string, string) {
 	name := GetUserInformation(token).Name
 
@@ -281,16 +238,13 @@ func NameGetterReplacer(locale, _, response, token string) (string, string) {
 
 var names = SerializeNames()
 
-// SerializeNames retrieves all the names from res/datasets/names.txt and returns an array of names
 func SerializeNames() (names []string) {
 	namesFile := string(ReadFile("res/datasets/names.txt"))
 
-	// Iterate each line of the file
 	names = append(names, strings.Split(strings.TrimSuffix(namesFile, "\n"), "\n")...)
 	return
 }
 
-// FindName returns a name found in the given sentence or an empty string if no name has been found
 func FindName(sentence string) string {
 	for _, name := range names {
 		if !strings.Contains(strings.ToLower(" "+sentence+" "), " "+name+" ") {
@@ -303,21 +257,16 @@ func FindName(sentence string) string {
 	return ""
 }
 
-// NameSetterReplacer gets the name specified in the message and save it in the user's information.
-// See modules/modules.go#Module.Replacer() for more details.
 func NameSetterReplacer(locale, entry, response, token string) (string, string) {
 	name := FindName(entry)
 
-	// If there is no name in the entry string
 	if name == "" {
 		responseTag := "no name"
 		return responseTag, GetMessageu(locale, responseTag)
 	}
 
-	// Capitalize the name
 	name = strings.Title(name)
 
-	// Change the name inside the user information
 	ChangeUserInformation(token, func(information Information) Information {
 		information.Name = name
 		return information
@@ -333,20 +282,17 @@ type Message struct {
 
 var messages = map[string][]Message{}
 
-// GetMessage retrieves a message tag and returns a random message chose from res/datasets/messages.json
 func GetMessageu(locale, tag string) string {
 	for _, message := range messages[locale] {
-		// Find the message with the right tag
+
 		if message.Tag != tag {
 			continue
 		}
 
-		// Returns the only element if there aren't more
 		if len(message.Messages) == 1 {
 			return message.Messages[0]
 		}
 
-		// Returns a random sentence
 		rand.NewSource(time.Now().UnixNano()) // Seed
 		return message.Messages[rand.Intn(len(message.Messages))]
 	}
@@ -354,11 +300,8 @@ func GetMessageu(locale, tag string) string {
 	return ""
 }
 
-// package modules
-
 var decimal = "\\b\\d+([\\.,]\\d+)?"
 
-// FindRangeLimits finds the range for random numbers and returns a sorted integer array
 func FindRangeLimits(local, entry string) ([]int, error) {
 	decimalsRegex := regexp.MustCompile(decimal)
 	limitStrArr := decimalsRegex.FindAllString(entry, 2)
@@ -384,21 +327,15 @@ func FindRangeLimits(local, entry string) ([]int, error) {
 	return limitArr, nil
 }
 
-// package language
-
-// SearchTokens searches 2 tokens in the given sentence and returns it.
 func SearchTokens(sentence string) []string {
-	// Search the token with a regex
+
 	tokenRegex := regexp.MustCompile(`[a-z0-9]{32}`)
-	// Returns the found token
+
 	return tokenRegex.FindAllString(sentence, 2)
 }
 
-// RandomTag is the intent tag for its module
 var RandomTag = "random number"
 
-// RandomNumberReplacer replaces the pattern contained inside the response by a random number.
-// See modules/modules.go#Module.Replacer() for more details.
 func RandomNumberReplacer(locale, entry, response, _ string) (string, string) {
 	limitArr, err := FindRangeLimits(locale, entry)
 	if err != nil {
@@ -417,47 +354,38 @@ func RandomNumberReplacer(locale, entry, response, _ string) (string, string) {
 }
 
 var (
-	// GenresTag is the intent tag for its module
 	GenresTag = "movies genres"
-	// MoviesTag is the intent tag for its module
+
 	MoviesTag = "movies search"
-	// MoviesAlreadyTag is the intent tag for its module
+
 	MoviesAlreadyTag = "already seen movie"
-	// MoviesDataTag is the intent tag for its module
+
 	MoviesDataTag = "movies search from data"
 )
 
-// Information is the user's information retrieved from the client
 type Information struct {
 	Name           string   `json:"name"`
 	MovieGenres    []string `json:"movie_genres"`
 	MovieBlacklist []string `json:"movie_blacklist"`
 }
 
-// userInformation is a map which is the cache for user information
 var userInformation = map[string]Information{}
 
-// ChangeUserInformation requires the token of the user and a function which gives the actual
-// information and returns the new information.
 func ChangeUserInformation(token string, changer func(Information) Information) {
 	userInformation[token] = changer(userInformation[token])
 }
 
-// GenresReplacer gets the genre specified in the message and adds it to the user information.
-// See modules/modules.go#Module.Replacer() for more details.
 func GenresReplacer(locale, entry, response, token string) (string, string) {
 	genres := FindMoviesGenres(locale, entry)
 
-	// If there is no genres then reply with a message from res/datasets/messages.json
 	if len(genres) == 0 {
 		responseTag := "no genres"
 		return responseTag, GetMessageu(locale, responseTag)
 	}
 
-	// Change the user information to add the new genres
 	ChangeUserInformation(token, func(information Information) Information {
 		for _, genre := range genres {
-			// Append the genre only is it isn't already in the information
+
 			if Contains(information.MovieGenres, genre) {
 				continue
 			}
@@ -470,10 +398,8 @@ func GenresReplacer(locale, entry, response, token string) (string, string) {
 	return GenresTag, response
 }
 
-// LevenshteinDistance calculates the Levenshtein Distance between two given words and returns it.
-// Please see https://en.wikipedia.org/wiki/Levenshtein_distance.
 func LevenshteinDistance(first, second string) int {
-	// Returns the length if it's empty
+
 	if first == "" {
 		return len(second)
 	}
@@ -497,11 +423,10 @@ func LevenshteinDistance(first, second string) int {
 	return a + 1
 }
 
-// LevenshteinContains checks for a given matching string in a given sentence with a minimum rate for Levenshtein.
 func LevenshteinContains(sentence, matching string, rate int) bool {
 	words := strings.Split(sentence, " ")
 	for _, word := range words {
-		// Returns true if the distance is below the rate
+
 		if LevenshteinDistance(word, matching) <= rate {
 			return true
 		}
@@ -511,7 +436,6 @@ func LevenshteinContains(sentence, matching string, rate int) bool {
 }
 
 var (
-	// MoviesGenres initializes movies genres in different languages
 	MoviesGenres = map[string][]string{
 		"en": {
 			"Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama", "Fantasy",
@@ -521,14 +445,12 @@ var (
 	movies = SerializeMovies()
 )
 
-// Movie is the serializer from res/datasets/movies.csv
 type Movie struct {
 	Name   string
 	Genres []string
 	Rating float64
 }
 
-// SerializeMovies retrieves the content of res/datasets/movies.csv and serialize it
 func SerializeMovies() (movies []Movie) {
 	path := "res/datasets/movies.csv"
 	bytes, err := os.Open(path)
@@ -545,7 +467,6 @@ func SerializeMovies() (movies []Movie) {
 			log.Fatal(err)
 		}
 
-		// Convert the string to a float
 		rating, _ := strconv.ParseFloat(line[3], 64)
 
 		movies = append(movies, Movie{
@@ -558,7 +479,6 @@ func SerializeMovies() (movies []Movie) {
 	return
 }
 
-// FindMoviesGenres returns an array of genres found in the entry string
 func FindMoviesGenres(locale, content string) (output []string) {
 	for i, genre := range MoviesGenres[locale] {
 		if LevenshteinContains(strings.ToUpper(content), strings.ToUpper(genre), 2) {
@@ -569,13 +489,9 @@ func FindMoviesGenres(locale, content string) (output []string) {
 	return
 }
 
-// MovieSearchReplacer replaces the patterns contained inside the response by the movie's name
-// and rating from the genre specified in the message.
-// See modules/modules.go#Module.Replacer() for more details.
 func MovieSearchReplacer(locale, entry, response, token string) (string, string) {
 	genres := FindMoviesGenres(locale, entry)
 
-	// If there is no genres then reply with a message from res/datasets/messages.json
 	if len(genres) == 0 {
 		responseTag := "no genres"
 		return responseTag, GetMessageu(locale, responseTag)
@@ -586,11 +502,8 @@ func MovieSearchReplacer(locale, entry, response, token string) (string, string)
 	return MoviesTag, fmt.Sprintf(response, movie.Name, movie.Rating)
 }
 
-// MovieSearchFromInformationReplacer replaces the patterns contained inside the response by the movie's name
-// and rating from the genre in the user's information.
-// See modules/modules.go#Module.Replacer() for more details.
 func MovieSearchFromInformationReplacer(locale, _, response, token string) (string, string) {
-	// If there is no genres then reply with a message from res/datasets/messages.json
+
 	genres := GetUserInformation(token).MovieGenres
 	if len(genres) == 0 {
 		responseTag := "no genres saved"
@@ -602,11 +515,10 @@ func MovieSearchFromInformationReplacer(locale, _, response, token string) (stri
 	return MoviesDataTag, fmt.Sprintf(response, genresJoined, movie.Name, movie.Rating)
 }
 
-// SearchMovie search a movie for a given genre
 func SearchMovie(genre, userToken string) (output Movie) {
 	for _, movie := range movies {
 		userMovieBlacklist := GetUserInformation(userToken).MovieBlacklist
-		// Continue if the movie is not from the request genre or if this movie has already been suggested
+
 		if !Contains(movie.Genres, genre) || Contains(userMovieBlacklist, movie.Name) {
 			continue
 		}
@@ -616,7 +528,6 @@ func SearchMovie(genre, userToken string) (output Movie) {
 		}
 	}
 
-	// Add the found movie to the user blacklist
 	ChangeUserInformation(userToken, func(information Information) Information {
 		information.MovieBlacklist = append(information.MovieBlacklist, output.Name)
 		return information
@@ -627,9 +538,6 @@ func SearchMovie(genre, userToken string) (output Movie) {
 
 func init() {
 	RegisterModules("en", []Modulem{
-		// AREA
-		// For modules related to countries, please add the translations of the countries' names
-		// or open an issue to ask for translations.
 
 		{
 			Tag: AreaTag,
@@ -643,7 +551,6 @@ func init() {
 			Replacer: AreaReplacer,
 		},
 
-		// CAPITAL
 		{
 			Tag: CapitalTag,
 			Patterns: []string{
@@ -657,7 +564,6 @@ func init() {
 			Replacer: CapitalReplacer,
 		},
 
-		// CURRENCY
 		{
 			Tag: CurrencyTag,
 			Patterns: []string{
@@ -672,10 +578,6 @@ func init() {
 			Replacer: CurrencyReplacer,
 		},
 
-		// MATH
-		// A regex translation is also required in `language/math.go`, please don't forget to translate it.
-		// Otherwise, remove the registration of the Math module in this file.
-
 		{
 			Tag: MathTag,
 			Patterns: []string{
@@ -688,11 +590,6 @@ func init() {
 			},
 			Replacer: MathReplacer,
 		},
-
-		// MOVIES
-		// A translation of movies genres is also required in `language/movies.go`, please don't forget
-		// to translate it.
-		// Otherwise, remove the registration of the Movies modules in this file.
 
 		{
 			Tag: GenresTag,
@@ -749,7 +646,6 @@ func init() {
 			Replacer: MovieSearchFromInformationReplacer,
 		},
 
-		// NAME
 		{
 			Tag: NameGetterTag,
 			Patterns: []string{
@@ -773,7 +669,6 @@ func init() {
 			Replacer: NameSetterReplacer,
 		},
 
-		// RANDOM
 		{
 			Tag: RandomTag,
 			Patterns: []string{
@@ -813,14 +708,9 @@ func init() {
 		},
 	})
 
-	// COUNTRIES
-	// Please translate this method for adding the correct article in front of countries names.
-	// Otherwise, remove the countries modules from this file.
-
 	ArticleCountriesm["en"] = ArticleCountries
 }
 
-// ArticleCountries returns the country with its article in front.
 func ArticleCountries(name string) string {
 	if name == "United States" {
 		return "the " + name
@@ -831,12 +721,8 @@ func ArticleCountries(name string) string {
 
 const adviceURL = "https://api.adviceslip.com/advice"
 
-// AdvicesTag is the intent tag for its module
 var AdvicesTag = "advices"
 
-// AdvicesReplacer replaces the pattern contained inside the response by a random advice from the api
-// specified by the adviceURL.
-// See modules/modules.go#Module.Replacer() for more details.
 func AdvicesReplacer(locale, entry, response, _ string) (string, string) {
 
 	resp, err := http.Get(adviceURL)
@@ -860,20 +746,16 @@ func AdvicesReplacer(locale, entry, response, _ string) (string, string) {
 	return AdvicesTag, fmt.Sprintf(response, advice)
 }
 
-// A Rule is a function that takes the given sentence and tries to parse a specific
-// rule to return a date, if not, the date is empty.
 type Rule func(string, string) time.Time
 
 var rules []Rule
 
-// RegisterRule takes a rule in parameter and register it to the array of rules
 func RegisterRule(rule Rule) {
 	rules = append(rules, rule)
 }
 
 const day = time.Hour * 24
 
-// RuleTranslations are the translations of the rules in different languages
 var RuleTranslations = map[string]RuleTranslation{
 	"en": {
 		DaysOfWeek: []string{
@@ -892,7 +774,6 @@ var RuleTranslations = map[string]RuleTranslation{
 	},
 }
 
-// A RuleTranslation is all the texts/regexs to match the dates
 type RuleTranslation struct {
 	DaysOfWeek        []string
 	Months            []string
@@ -914,13 +795,10 @@ var daysOfWeek = map[string]time.Weekday{
 	"sunday":    time.Sunday,
 }
 
-// RuleToday checks for today, tonight, this afternoon dates in the given sentence, then
-// it returns the date parsed.
 func RuleToday(locale, sentence string) (result time.Time) {
 	todayRegex := regexp.MustCompile(RuleTranslations[locale].RuleToday)
 	today := todayRegex.FindString(sentence)
 
-	// Returns an empty date struct if no date has been found
 	if today == "" {
 		return time.Time{}
 	}
@@ -928,20 +806,16 @@ func RuleToday(locale, sentence string) (result time.Time) {
 	return time.Now()
 }
 
-// RuleTomorrow checks for "tomorrow" and "after tomorrow" dates in the given sentence, then
-// it returns the date parsed.
 func RuleTomorrow(locale, sentence string) (result time.Time) {
 	tomorrowRegex := regexp.MustCompile(RuleTranslations[locale].RuleTomorrow)
 	date := tomorrowRegex.FindString(sentence)
 
-	// Returns an empty date struct if no date has been found
 	if date == "" {
 		return time.Time{}
 	}
 
 	result = time.Now().Add(day)
 
-	// If the date contains "after", we add 24 hours to tomorrow's date
 	if strings.Contains(date, RuleTranslations[locale].RuleAfterTomorrow) {
 		return result.Add(day)
 	}
@@ -949,21 +823,18 @@ func RuleTomorrow(locale, sentence string) (result time.Time) {
 	return
 }
 
-// RuleDayOfWeek checks for the days of the week and the keyword "next" in the given sentence,
-// then it returns the date parsed.
 func RuleDayOfWeek(locale, sentence string) time.Time {
 	dayOfWeekRegex := regexp.MustCompile(RuleTranslations[locale].RuleDayOfWeek)
 	date := dayOfWeekRegex.FindString(sentence)
 
-	// Returns an empty date struct if no date has been found
 	if date == "" {
 		return time.Time{}
 	}
 
 	var foundDayOfWeek int
-	// Find the integer value of the found day of the week
+
 	for _, dayOfWeek := range daysOfWeek {
-		// Down case the day of the week to match the found date
+
 		stringDayOfWeek := strings.ToLower(dayOfWeek.String())
 
 		if strings.Contains(date, stringDayOfWeek) {
@@ -972,25 +843,20 @@ func RuleDayOfWeek(locale, sentence string) time.Time {
 	}
 
 	currentDay := int(time.Now().Weekday())
-	// Calculate the date of the found day
+
 	calculatedDate := foundDayOfWeek - currentDay
 
-	// If the day is already passed in the current week, then we add another week to the count
 	if calculatedDate <= 0 {
 		calculatedDate += 7
 	}
 
-	// If there is "next" in the sentence, then we add another week
 	if strings.Contains(date, RuleTranslations[locale].RuleNextDayOfWeek) {
 		calculatedDate += 7
 	}
 
-	// Then add the calculated number of day to the actual date
 	return time.Now().Add(day * time.Duration(calculatedDate))
 }
 
-// RuleNaturalDate checks for the dates written in natural language in the given sentence,
-// then it returns the date parsed.
 func RuleNaturalDate(locale, sentence string) time.Time {
 	naturalMonthRegex := regexp.MustCompile(
 		RuleTranslations[locale].RuleNaturalDate,
@@ -1000,7 +866,6 @@ func RuleNaturalDate(locale, sentence string) time.Time {
 	month := naturalMonthRegex.FindString(sentence)
 	day := naturalDayRegex.FindString(sentence)
 
-	// Put the month in english to parse the time with time golang package
 	if locale != "en" {
 		monthIndex := Index(RuleTranslations[locale].Months, month)
 		month = RuleTranslations["en"].Months[monthIndex]
@@ -1009,32 +874,27 @@ func RuleNaturalDate(locale, sentence string) time.Time {
 	parsedMonth, _ := time.Parse("January", month)
 	parsedDay, _ := strconv.Atoi(day)
 
-	// Returns an empty date struct if no date has been found
 	if day == "" && month == "" {
 		return time.Time{}
 	}
 
-	// If only the month is specified
 	if day == "" {
-		// Calculate the number of months to add
+
 		calculatedMonth := parsedMonth.Month() - time.Now().Month()
-		// Add a year if the month is passed
+
 		if calculatedMonth <= 0 {
 			calculatedMonth += 12
 		}
 
-		// Remove the number of days elapsed in the month to reach the first
 		return time.Now().AddDate(0, int(calculatedMonth), -time.Now().Day()+1)
 	}
 
-	// Parse the date
 	parsedDate := fmt.Sprintf("%d-%02d-%02d", time.Now().Year(), parsedMonth.Month(), parsedDay)
 	date, err := time.Parse("2006-01-02", parsedDate)
 	if err != nil {
 		return time.Time{}
 	}
 
-	// If the date has been passed, add a year
 	if time.Now().After(date) {
 		date = date.AddDate(1, 0, 0)
 	}
@@ -1042,26 +902,21 @@ func RuleNaturalDate(locale, sentence string) time.Time {
 	return date
 }
 
-// RuleDate checks for dates written like mm/dd
 func RuleDate(locale, sentence string) time.Time {
 	dateRegex := regexp.MustCompile(`(\d{2}|\d)/(\d{2}|\d)`)
 	date := dateRegex.FindString(sentence)
 
-	// Returns an empty date struct if no date has been found
 	if date == "" {
 		return time.Time{}
 	}
 
-	// Parse the found date
 	parsedDate, err := time.Parse("01/02", date)
 	if err != nil {
 		return time.Time{}
 	}
 
-	// Add the current year to the date
 	parsedDate = parsedDate.AddDate(time.Now().Year(), 0, 0)
 
-	// Add another year if the date is passed
 	if time.Now().After(parsedDate) {
 		parsedDate = parsedDate.AddDate(1, 0, 0)
 	}
@@ -1070,7 +925,7 @@ func RuleDate(locale, sentence string) time.Time {
 }
 
 func init() {
-	// Register the rules
+
 	RegisterRule(RuleToday)
 	RegisterRule(RuleTomorrow)
 	RegisterRule(RuleDayOfWeek)
