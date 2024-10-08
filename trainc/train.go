@@ -29,34 +29,23 @@ import (
 
 // ----------------------------------------------------------
 
-var AreaTag = "area"
-
-var JokesTag = "jokes"
-
-var CurrencyTag = "currency"
-
 var (
-	CapitalTag = "capital"
+	CapitalTag  = "capital"
+	AreaTag     = "area"
+	JokesTag    = "jokes"
+	CurrencyTag = "currency"
+	countries   = SerializeCountries()
+	messages    = map[string][]Message{}
 
-	ArticleCountriesm = map[string]func(string) string{}
-)
-
-var countries = SerializeCountries()
-
-var messages = map[string][]Message{}
-
-var (
 	GenresTag = "movies genres"
 
 	MoviesTag = "movies search"
 
 	MoviesAlreadyTag = "already seen movie"
 
-	MoviesDataTag = "movies search from data"
-)
-var userInformation = map[string]Information{}
+	MoviesDataTag   = "movies search from data"
+	userInformation = map[string]Information{}
 
-var (
 	MoviesGenres = map[string][]string{
 		"en": {
 			"Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama", "Fantasy",
@@ -64,9 +53,47 @@ var (
 		},
 	}
 	movies = SerializeMovies()
-)
 
-var rules []Rule
+	ArticleCountriesm = map[string]func(string) string{}
+
+	rules []Rule
+
+	modulesm = map[string][]Modulem{}
+
+	intents = map[string][]Intent{}
+
+	Locales = []Locale{
+		{
+			Tag:  "en",
+			Name: "english",
+		},
+	}
+
+	MathTag = "math"
+
+	NameGetterTag = "name getter"
+
+	NameSetterTag = "name setter"
+
+	MathDecimals = map[string]string{
+		"en": `(\d+( |-)decimal(s)?)|(number (of )?decimal(s)? (is )?\d+)`,
+	}
+
+	names      = SerializeNames()
+	decimal    = "\\b\\d+([\\.,]\\d+)?"
+	RandomTag  = "random number"
+	AdvicesTag = "advices"
+
+	daysOfWeek = map[string]time.Weekday{
+		"monday":    time.Monday,
+		"tuesday":   time.Tuesday,
+		"wednesday": time.Wednesday,
+		"thursday":  time.Thursday,
+		"friday":    time.Friday,
+		"saturday":  time.Saturday,
+		"sunday":    time.Sunday,
+	}
+)
 
 var RuleTranslations = map[string]RuleTranslation{
 	"en": {
@@ -84,47 +111,6 @@ var RuleTranslations = map[string]RuleTranslation{
 		RuleNextDayOfWeek: "next",
 		RuleNaturalDate:   `january|february|march|april|may|june|july|august|september|october|november|december`,
 	},
-}
-
-var modulesm = map[string][]Modulem{}
-
-var intents = map[string][]Intent{}
-
-var Locales = []Locale{
-	{
-		Tag:  "en",
-		Name: "english",
-	},
-}
-
-var MathTag = "math"
-
-var MathDecimals = map[string]string{
-	"en": `(\d+( |-)decimal(s)?)|(number (of )?decimal(s)? (is )?\d+)`,
-}
-
-var (
-	NameGetterTag = "name getter"
-
-	NameSetterTag = "name setter"
-)
-
-var names = SerializeNames()
-
-var decimal = "\\b\\d+([\\.,]\\d+)?"
-
-var RandomTag = "random number"
-
-var AdvicesTag = "advices"
-
-var daysOfWeek = map[string]time.Weekday{
-	"monday":    time.Monday,
-	"tuesday":   time.Tuesday,
-	"wednesday": time.Wednesday,
-	"thursday":  time.Thursday,
-	"friday":    time.Friday,
-	"saturday":  time.Saturday,
-	"sunday":    time.Sunday,
 }
 
 // ----------------------------------------------------------
