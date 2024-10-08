@@ -143,7 +143,7 @@ func GetMessageu(locale, tag string) string {
 		}
 
 		// Returns a random sentence
-		rand.Seed(time.Now().UnixNano())
+		rand.NewSource(time.Now().UnixNano()) // Seed
 		return message.Messages[rand.Intn(len(message.Messages))]
 	}
 
@@ -1850,14 +1850,6 @@ func ArticleCountries(name string) string {
 }
 
 // package language
-
-// import (
-// 	"encoding/json"
-// 	"fmt"
-// 	"strings"
-
-// 	"marboris/core/cli"
-// )
 
 // Country is the serializer of the countries.json file in the res folder
 type Country struct {
