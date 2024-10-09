@@ -4,9 +4,8 @@
 *.dll
 *.so
 *.dylib
-main
-core
-marboris
+Marboris
+Marboris-AI-G1-23-RELEASE-CORE
 
 # Test binary, build with `go test -c`
 *.test

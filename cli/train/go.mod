@@ -1,6 +1,6 @@
-module marboris
+module Marboris-AI-G1-23-RELEASE-TRAIN
 
-go 1.12
+go 1.23.2
 
 require (
 	github.com/fatih/color v1.9.0 // indirect
