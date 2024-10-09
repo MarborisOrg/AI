@@ -1,4 +1,4 @@
-module marboris/core
+module marboris
 
 go 1.12
 
