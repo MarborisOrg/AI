@@ -7,7 +7,6 @@ import (
 	"github.com/gookit/color"
 
 	"marboris/core/cli"
-	"marboris/core/trainc"
 )
 
 var neuralNetworks = map[string]cli.Network{}
@@ -21,11 +20,11 @@ func main() {
 
 	cli.Authenticate()
 
+	// en
 	for _, locale := range cli.Locales {
 		cli.SerializeMessages(locale.Tag)
 
-		trainc.CreateNeuralNetwork(locale.Tag)                           // train data
-		neuralNetworks[locale.Tag] = cli.CreateNeuralNetwork(locale.Tag) // get data and save it
+		neuralNetworks[locale.Tag] = cli.CreateNeuralNetwork(locale.Tag)
 	}
 
 	cli.Serve(neuralNetworks, *port)

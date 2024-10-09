@@ -31,7 +31,7 @@ int main() {
         }
 
         // ارسال پیام با پارامترهای req, rate و hiddensNodes
-        std::string message = "req=false,rate=0.2,hiddensNodes=80";
+        std::string message = "req=false,rate=0.1,hiddensNodes=50";
         int send_result = send(sock, message.c_str(), message.size(), 0);
         if (send_result < 0) {
             std::cerr << "Error sending message" << std::endl;

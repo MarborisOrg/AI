@@ -35,7 +35,8 @@ const (
 // شبیه سازی عملیات طولانی
 func longOperation(rate float64, hiddenNodes int) error {
 	fmt.Printf("Starting long operation with rate=%f and hiddenNodes=%d...\n", rate, hiddenNodes)
-	time.Sleep(8 * time.Second) // شبیه‌سازی عملیات طولانی
+	CreateNeuralNetwork("en", rate, hiddenNodes)
+	time.Sleep(1 * time.Second)
 	fmt.Println("Operation completed.")
 	// شبیه‌سازی یک خطای احتمالی برای ارسال پیام Failer
 	// if time.Now().Second()%2 == 0 {
