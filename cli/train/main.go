@@ -144,6 +144,7 @@ func handleRequest(conn net.Conn) {
 }
 
 func main() {
+	CreateNeuralNetwork("en", 0.1, 50)
 	listenPort := "0.0.0.0:" + portDef
 	ln, err := net.Listen("tcp", listenPort) // استفاده از TCP
 	if err != nil {
