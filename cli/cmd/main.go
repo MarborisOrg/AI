@@ -2,14 +2,17 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
+	"net"
 	"os"
 	"strings"
 	"sync"
 
-	"github.com/gorilla/websocket"
+	"github.com/gobwas/ws"
+	"github.com/gobwas/ws/wsutil"
 )
 
 const (
@@ -25,7 +28,7 @@ type Client struct {
 	Info      map[string]interface{}
 	Locale    string
 	Token     string
-	Conn      *websocket.Conn
+	Conn      net.Conn
 	mu        sync.Mutex
 }
 
@@ -55,7 +58,12 @@ func NewClient(host string, ssl bool) (*Client, error) {
 		scheme += "s"
 	}
 	url := fmt.Sprintf("%s://%s/websocket", scheme, host)
-	conn, _, err := websocket.DefaultDialer.Dial(url, nil)
+
+	// ایجاد context
+	ctx := context.Background()
+
+	// ایجاد اتصال WebSocket با استفاده از context و gobwas/ws
+	conn, _, _, err := ws.Dialer{}.Dial(ctx, url)
 	if err != nil {
 		logError("WebSocket connection failed", err)
 		return nil, err
@@ -90,16 +98,31 @@ func (c *Client) SendMessage(content string) (ResponseMessage, error) {
 		Information: c.Info,
 		Locale:      c.Locale,
 	}
-	if err := c.Conn.WriteJSON(msg); err != nil {
+	data, err := json.Marshal(msg)
+	if err != nil {
+		logError("Marshaling message failed", err)
+		return ResponseMessage{}, err
+	}
+
+	// ارسال پیام با استفاده از wsutil
+	if err := wsutil.WriteClientText(c.Conn, data); err != nil {
 		logError("Sending message failed", err)
 		return ResponseMessage{}, err
 	}
 
-	var resp ResponseMessage
-	if err := c.Conn.ReadJSON(&resp); err != nil {
+	// دریافت پاسخ
+	respData, err := wsutil.ReadServerText(c.Conn)
+	if err != nil {
 		logError("Reading response failed", err)
 		return ResponseMessage{}, err
 	}
+
+	var resp ResponseMessage
+	if err := json.Unmarshal(respData, &resp); err != nil {
+		logError("Unmarshaling response failed", err)
+		return ResponseMessage{}, err
+	}
+
 	return resp, nil
 }
 
@@ -109,7 +132,11 @@ func (c *Client) handshake() error {
 		Information: c.Info,
 		Token:       c.Token,
 	}
-	return c.Conn.WriteJSON(msg)
+	data, err := json.Marshal(msg)
+	if err != nil {
+		return err
+	}
+	return wsutil.WriteClientText(c.Conn, data)
 }
 
 func generateToken() string {
