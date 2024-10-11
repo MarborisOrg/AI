@@ -18,6 +18,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"os/user"
 	"path/filepath"
 
 	"github.com/gookit/color"
@@ -87,7 +88,7 @@ var messages = map[string][]Message{}
 
 func SerializeMessages(locale string) []Message {
 	var currentMessages []Message
-	err := json.Unmarshal(ReadFile("res/locales/"+locale+"/messages.json"), &currentMessages)
+	err := json.Unmarshal(ReadFile(GetResDir("locales", "messages.json", locale)), &currentMessages)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -164,9 +165,13 @@ func GetUserInformation(token string) Information {
 	return userInformation[token]
 }
 
-func CreateNeuralNetwork(locale string) (neuralNetwork Network) {
+func getTempDir(fileName string) (filePath string) {
 	tempDir := os.TempDir()
-	saveFile := filepath.Join(tempDir, "training.json")
+	return filepath.Join(tempDir, fileName)
+}
+
+func CreateNeuralNetwork(locale string) (neuralNetwork Network) {
+	saveFile := getTempDir("Marboris-Training.json")
 
 	_, err := os.Open(saveFile)
 
@@ -628,8 +633,34 @@ func GetIntentsa(locale string) []Intent {
 	return intents[locale]
 }
 
+func GetResDir(dir string, file string, dir2 ...string) (filePath string) {
+	usr, err := user.Current()
+	if err != nil {
+		fmt.Println("Error getting user home directory:", err)
+		panic("[Training] No user.. (419)")
+	}
+	homeDir := usr.HomeDir
+
+	if len(dir2) == 0 || dir2[0] == "" {
+		return filepath.Join(homeDir, ".marboris", "res", dir, file)
+	}
+
+	return filepath.Join(homeDir, ".marboris", "res", dir, dir2[0], file)
+}
+
+func GetResFile(fileName string) (filePath string) {
+	usr, err := user.Current()
+	if err != nil {
+		fmt.Println("Error getting user home directory:", err)
+		panic("[Training] No user.. (419)")
+	}
+	homeDir := usr.HomeDir
+
+	return filepath.Join(homeDir, ".marboris", "res", fileName)
+}
+
 func SerializeIntents(locale string) (_intents []Intent) {
-	err := json.Unmarshal(ReadFile("res/locales/"+locale+"/intents.json"), &_intents)
+	err := json.Unmarshal(ReadFile(GetResDir("locales", "intents.json", locale)), &_intents)
 	if err != nil {
 		panic(err)
 	}
@@ -716,7 +747,7 @@ func removeStopWords(locale string, words []string) []string {
 		return words
 	}
 
-	stopWords := string(ReadFile("res/locales/" + locale + "/stopwords.txt"))
+	stopWords := string(ReadFile(GetResDir("locales", "stopwords.txt", locale)))
 
 	var wordsToRemove []string
 
@@ -943,7 +974,7 @@ func Exists(tag string) bool {
 	return false
 }
 
-var fileName = "res/authentication.txt"
+var fileName = getTempDir("Marboris-Authentication.txt")
 
 var authenticationHash []byte
 
@@ -1011,7 +1042,7 @@ func WriteIntents(locale string, intents []Intent) {
 
 	bytes, _ := json.MarshalIndent(intents, "", "  ")
 
-	file, err := os.Create("res/locales/" + locale + "/intents.json")
+	file, err := os.Create(GetResDir("locales", "intents.json", locale))
 	if err != nil {
 		panic(err)
 	}
@@ -1495,7 +1526,7 @@ type Country struct {
 var countries = SerializeCountries()
 
 func SerializeCountries() (countries []Country) {
-	err := json.Unmarshal(ReadFile("res/datasets/countries.json"), &countries)
+	err := json.Unmarshal(ReadFile(GetResDir("datasets", "countries.json")), &countries)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -1538,7 +1569,7 @@ var (
 )
 
 func SerializeMovies() (movies []Movie) {
-	path := "res/datasets/movies.csv"
+	path := GetResDir("datasets", "movies.csv")
 	bytes, err := os.Open(path)
 	if err != nil {
 		bytes, _ = os.Open("../" + path)
@@ -2177,7 +2208,7 @@ func FindNumberOfDecimals(locale, entry string) int {
 var names = SerializeNames()
 
 func SerializeNames() (names []string) {
-	namesFile := string(ReadFile("res/datasets/names.txt"))
+	namesFile := string(ReadFile(GetResDir("datasets" ,"names.txt")))
 
 	names = append(names, strings.Split(strings.TrimSuffix(namesFile, "\n"), "\n")...)
 	return
