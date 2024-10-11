@@ -86,7 +86,7 @@ var messages = map[string][]Message{}
 
 func SerializeMessages(locale string) []Message {
 	var currentMessages []Message
-	err := json.Unmarshal(ReadFile("../../res/locales/"+locale+"/messages.json"), &currentMessages)
+	err := json.Unmarshal(ReadFile("res/locales/"+locale+"/messages.json"), &currentMessages)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -164,7 +164,7 @@ func GetUserInformation(token string) Information {
 }
 
 func CreateNeuralNetwork(locale string) (neuralNetwork Network) {
-	saveFile := "../../res/locales/" + locale + "/training.json"
+	saveFile := "res/locales/" + locale + "/training.json"
 
 	_, err := os.Open(saveFile)
 
@@ -627,7 +627,7 @@ func GetIntentsa(locale string) []Intent {
 }
 
 func SerializeIntents(locale string) (_intents []Intent) {
-	err := json.Unmarshal(ReadFile("../../res/locales/"+locale+"/intents.json"), &_intents)
+	err := json.Unmarshal(ReadFile("res/locales/"+locale+"/intents.json"), &_intents)
 	if err != nil {
 		panic(err)
 	}
@@ -714,7 +714,7 @@ func removeStopWords(locale string, words []string) []string {
 		return words
 	}
 
-	stopWords := string(ReadFile("../../res/locales/" + locale + "/stopwords.txt"))
+	stopWords := string(ReadFile("res/locales/" + locale + "/stopwords.txt"))
 
 	var wordsToRemove []string
 
@@ -941,7 +941,7 @@ func Exists(tag string) bool {
 	return false
 }
 
-var fileName = "../../res/authentication.txt"
+var fileName = "res/authentication.txt"
 
 var authenticationHash []byte
 
@@ -1009,7 +1009,7 @@ func WriteIntents(locale string, intents []Intent) {
 
 	bytes, _ := json.MarshalIndent(intents, "", "  ")
 
-	file, err := os.Create("../../res/locales/" + locale + "/intents.json")
+	file, err := os.Create("res/locales/" + locale + "/intents.json")
 	if err != nil {
 		panic(err)
 	}
@@ -1493,7 +1493,7 @@ type Country struct {
 var countries = SerializeCountries()
 
 func SerializeCountries() (countries []Country) {
-	err := json.Unmarshal(ReadFile("../../res/datasets/countries.json"), &countries)
+	err := json.Unmarshal(ReadFile("res/datasets/countries.json"), &countries)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -1536,7 +1536,7 @@ var (
 )
 
 func SerializeMovies() (movies []Movie) {
-	path := "../../res/datasets/movies.csv"
+	path := "res/datasets/movies.csv"
 	bytes, err := os.Open(path)
 	if err != nil {
 		bytes, _ = os.Open("../" + path)
@@ -2175,7 +2175,7 @@ func FindNumberOfDecimals(locale, entry string) int {
 var names = SerializeNames()
 
 func SerializeNames() (names []string) {
-	namesFile := string(ReadFile("../../res/datasets/names.txt"))
+	namesFile := string(ReadFile("res/datasets/names.txt"))
 
 	names = append(names, strings.Split(strings.TrimSuffix(namesFile, "\n"), "\n")...)
 	return
