@@ -25,11 +25,11 @@ const (
 )
 
 type Client struct {
-	Info      map[string]interface{}
-	Locale    string
-	Token     string
-	Conn      net.Conn
-	mu        sync.Mutex
+	Info   map[string]interface{}
+	Locale string
+	Token  string
+	Conn   net.Conn
+	mu     sync.Mutex
 }
 
 type RequestMessage struct {
@@ -59,10 +59,8 @@ func NewClient(host string, ssl bool) (*Client, error) {
 	}
 	url := fmt.Sprintf("%s://%s/websocket", scheme, host)
 
-	// ایجاد context
 	ctx := context.Background()
 
-	// ایجاد اتصال WebSocket با استفاده از context و gobwas/ws
 	conn, _, _, err := ws.Dialer{}.Dial(ctx, url)
 	if err != nil {
 		logError("WebSocket connection failed", err)
@@ -104,13 +102,11 @@ func (c *Client) SendMessage(content string) (ResponseMessage, error) {
 		return ResponseMessage{}, err
 	}
 
-	// ارسال پیام با استفاده از wsutil
 	if err := wsutil.WriteClientText(c.Conn, data); err != nil {
 		logError("Sending message failed", err)
 		return ResponseMessage{}, err
 	}
 
-	// دریافت پاسخ
 	respData, err := wsutil.ReadServerText(c.Conn)
 	if err != nil {
 		logError("Reading response failed", err)
