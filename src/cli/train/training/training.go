@@ -411,7 +411,7 @@ func RegisterModules(locale string, _modules []Modulem) {
 }
 
 func SerializeCountries() (countries []Country) {
-	err := json.Unmarshal(ReadFile("../../res/datasets/countries.json"), &countries)
+	err := json.Unmarshal(ReadFile("../../../res/datasets/countries.json"), &countries)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -566,7 +566,7 @@ func NameGetterReplacer(locale, _, response, token string) (string, string) {
 }
 
 func SerializeNames() (names []string) {
-	namesFile := string(ReadFile("../../res/datasets/names.txt"))
+	namesFile := string(ReadFile("../../../res/datasets/names.txt"))
 
 	names = append(names, strings.Split(strings.TrimSuffix(namesFile, "\n"), "\n")...)
 	return
@@ -725,7 +725,7 @@ func LevenshteinContains(sentence, matching string, rate int) bool {
 }
 
 func SerializeMovies() (movies []Movie) {
-	path := "../../res/datasets/movies.csv"
+	path := "../../../res/datasets/movies.csv"
 	bytes, err := os.Open(path)
 	if err != nil {
 		bytes, _ = os.Open("../" + path)
@@ -998,7 +998,7 @@ func CacheIntents(locale string, _intents []Intent) {
 }
 
 func SerializeIntents(locale string) (_intents []Intent) {
-	err := json.Unmarshal(ReadFile("../../res/locales/"+locale+"/intents.json"), &_intents)
+	err := json.Unmarshal(ReadFile("../../../res/locales/"+locale+"/intents.json"), &_intents)
 	if err != nil {
 		panic(err)
 	}
@@ -1064,7 +1064,7 @@ func removeStopWords(locale string, words []string) []string {
 	if len(words) <= 4 {
 		return words
 	}
-	stopWords := string(ReadFile("../../res/locales/" + locale + "/stopwords.txt"))
+	stopWords := string(ReadFile("../../../res/locales/" + locale + "/stopwords.txt"))
 	var wordsToRemove []string
 	for _, stopWord := range strings.Split(stopWords, "\n") {
 		for _, word := range words {
@@ -1517,7 +1517,7 @@ func (network *Network) Train(iterations int) {
 }
 
 func CreateNeuralNetwork(locale string, rate float64, hiddensNodes int) (neuralNetwork Network) {
-	saveFile := "../../res/locales/" + locale + "/training.json"
+	saveFile := "../../../res/locales/" + locale + "/training.json"
 
 	inputs, outputs := TrainData(locale)
 	neuralNetwork = CreateNetwork(locale, rate, inputs, outputs, hiddensNodes)
