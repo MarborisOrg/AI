@@ -1,4 +1,4 @@
-module Marboris-AI-G1-23-RELEASE-TRAIN
+module marboris
 
 go 1.23.2
 
