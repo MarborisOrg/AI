@@ -5,25 +5,26 @@ import (
 	"fmt"
 
 	"github.com/gookit/color"
+	"marboris/src"
 )
 
-var neuralNetworksMain = map[string]Network{}
+var neuralNetworksMain = map[string]core.Network{}
 
 func main() {
 	port := flag.String("port", "8080", "The port for the API and WebSocket.")
 	flag.Parse()
 
-	marborisASCII := string(ReadFile("res/marboris-ascii.txt"))
+	marborisASCII := string(core.ReadFile("res/marboris-ascii.txt"))
 	fmt.Println(color.FgLightGreen.Render(marborisASCII))
 
-	Authenticate()
+	core.Authenticate()
 
 	// en
-	for _, locale := range Locales {
-		SerializeMessages(locale.Tag)
+	for _, locale := range core.Locales {
+		core.SerializeMessages(locale.Tag)
 
-		neuralNetworksMain[locale.Tag] = CreateNeuralNetwork(locale.Tag)
+		neuralNetworksMain[locale.Tag] = core.CreateNeuralNetwork(locale.Tag)
 	}
 
-	Serve(neuralNetworksMain, *port)
+	core.Serve(neuralNetworksMain, *port)
 }
