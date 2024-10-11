@@ -18,6 +18,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"path/filepath"
 
 	"github.com/gookit/color"
 
@@ -164,7 +165,8 @@ func GetUserInformation(token string) Information {
 }
 
 func CreateNeuralNetwork(locale string) (neuralNetwork Network) {
-	saveFile := "res/locales/" + locale + "/training.json"
+	tempDir := os.TempDir()
+	saveFile := filepath.Join(tempDir, "training.json")
 
 	_, err := os.Open(saveFile)
 
