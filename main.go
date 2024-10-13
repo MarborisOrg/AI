@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gookit/color"
-	"marboris/src/core"
+	"marboris/core"
 )
 
 var neuralNetworksMain = map[string]core.Network{}
