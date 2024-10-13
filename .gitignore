@@ -5,13 +5,11 @@
 *.so
 *.dylib
 main
-main~
 
 # Test binary, build with `go test -c`
 *.test
 
 generate_model.rb
-
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
@@ -19,8 +17,3 @@ generate_model.rb
 .vscode
 vendor
 coverage.txt
-
-res/authentication.txt
-
-res/locales/en/training.json
-training.json~
