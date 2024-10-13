@@ -8,15 +8,18 @@ type Message struct {
 	Tag      string   `json:"tag"`
 	Messages []string `json:"messages"`
 }
+
 type Information struct {
 	Name           string   `json:"name"`
 	MovieGenres    []string `json:"movie_genres"`
 	MovieBlacklist []string `json:"movie_blacklist"`
 }
+
 type Derivative struct {
 	Delta      Matrix
 	Adjustment Matrix
 }
+
 type (
 	Matrix  [][]float64
 	Network struct {

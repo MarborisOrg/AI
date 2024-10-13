@@ -304,7 +304,7 @@ func DotProduct(matrix, matrix2 Matrix) Matrix {
 func Sum(matrix, matrix2 Matrix) (resultMatrix Matrix) {
 	ErrorNotSameSize(matrix, matrix2)
 
-	resultMatrix = CreateMatrix(Rows(matrix), Columns(matrix))
+	resultMatrix = CreateMatrix(Rows(matrix), Columns(matrix)) // warning is fine
 
 	return ApplyFunctionWithIndex(matrix, func(i, j int, x float64) float64 {
 		return matrix[i][j] + matrix2[i][j]
@@ -324,7 +324,7 @@ func Differencen(matrix, matrix2 Matrix) (resultMatrix Matrix) {
 func Multiplication(matrix, matrix2 Matrix) (resultMatrix Matrix) {
 	ErrorNotSameSize(matrix, matrix2)
 
-	resultMatrix = CreateMatrix(Rows(matrix), Columns(matrix))
+	resultMatrix = CreateMatrix(Rows(matrix), Columns(matrix)) // warning is fine
 
 	return ApplyFunctionWithIndex(matrix, func(i, j int, x float64) float64 {
 		return matrix[i][j] * matrix2[i][j]
