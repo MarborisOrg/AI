@@ -14,7 +14,7 @@ func main() {
 	port := flag.String("port", "8080", "The port for the API and WebSocket.")
 	flag.Parse()
 
-	marborisASCII := string(core.ReadFile(core.GetResFile("marboris-ascii.txt")))
+	marborisASCII := string(core.ReadFile(core.GetResDir("", "marboris-ascii.txt")))
 	fmt.Println(color.FgLightGreen.Render(marborisASCII))
 
 	core.Authenticate()

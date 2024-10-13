@@ -641,22 +641,15 @@ func GetResDir(dir string, file string, dir2 ...string) (filePath string) {
 	}
 	homeDir := usr.HomeDir
 
+	if (dir == "") {
+		return filepath.Join(homeDir, ".marboris", "res", file)
+	}
+
 	if len(dir2) == 0 || dir2[0] == "" {
 		return filepath.Join(homeDir, ".marboris", "res", dir, file)
 	}
 
 	return filepath.Join(homeDir, ".marboris", "res", dir, dir2[0], file)
-}
-
-func GetResFile(fileName string) (filePath string) {
-	usr, err := user.Current()
-	if err != nil {
-		fmt.Println("Error getting user home directory:", err)
-		panic("[Training] No user.. (419)")
-	}
-	homeDir := usr.HomeDir
-
-	return filepath.Join(homeDir, ".marboris", "res", fileName)
 }
 
 func SerializeIntents(locale string) (_intents []Intent) {
