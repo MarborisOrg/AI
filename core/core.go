@@ -12,20 +12,19 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"os/user"
+	"path/filepath"
 	"reflect"
 	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
-	"os/user"
-	"path/filepath"
 
 	"github.com/gookit/color"
 
 	"github.com/soudy/mathcat"
 
-	"github.com/gorilla/websocket"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/cheggaaa/pb.v1"
 
@@ -78,13 +77,6 @@ func Index(slice []string, text string) int {
 
 	return 0
 }
-
-type Message struct {
-	Tag      string   `json:"tag"`
-	Messages []string `json:"messages"`
-}
-
-var messages = map[string][]Message{}
 
 func SerializeMessages(locale string) []Message {
 	var currentMessages []Message
@@ -145,14 +137,6 @@ func ReadFile(path string) (bytes []byte) {
 	return bytes
 }
 
-type Information struct {
-	Name           string   `json:"name"`
-	MovieGenres    []string `json:"movie_genres"`
-	MovieBlacklist []string `json:"movie_blacklist"`
-}
-
-var userInformation = map[string]Information{}
-
 func ChangeUserInformation(token string, changer func(Information) Information) {
 	userInformation[token] = changer(userInformation[token])
 }
@@ -189,11 +173,6 @@ func CreateNeuralNetwork(locale string) (neuralNetwork Network) {
 	}
 
 	return
-}
-
-type Derivative struct {
-	Delta      Matrix
-	Adjustment Matrix
 }
 
 func (network Network) ComputeLastLayerDerivatives() Derivative {
@@ -262,8 +241,6 @@ func MultipliesByTwo(x float64) float64 {
 func SubtractsOne(x float64) float64 {
 	return x - 1
 }
-
-type Matrix [][]float64
 
 func CreateMatrix(rows, columns int) (matrix Matrix) {
 	matrix = make(Matrix, rows)
@@ -372,17 +349,6 @@ func ErrorNotSameSize(matrix, matrix2 Matrix) {
 	}
 }
 
-type Network struct {
-	Layers  []Matrix
-	Weights []Matrix
-	Biases  []Matrix
-	Output  Matrix
-	Rate    float64
-	Errors  []float64
-	Time    float64
-	Locale  string
-}
-
 func LoadNetwork(fileName string) *Network {
 	inF, err := os.Open(fileName)
 	if err != nil {
@@ -401,7 +367,7 @@ func LoadNetwork(fileName string) *Network {
 }
 
 func (network Network) Save(fileName string) {
-	outF, err := os.OpenFile(fileName, os.O_CREATE|os.O_RDWR, 0777)
+	outF, err := os.OpenFile(fileName, os.O_CREATE|os.O_RDWR, 0o777)
 	if err != nil {
 		panic("Failed to save the network to " + fileName + ".")
 	}
@@ -500,20 +466,6 @@ func (network *Network) Train(iterations int) {
 	fmt.Printf("The error rate is %s.\n", color.FgGreen.Render(arrangedError))
 }
 
-type Sentence struct {
-	Locale  string
-	Content string
-}
-
-type Result struct {
-	Tag   string
-	Value float64
-}
-
-var userCache = gocache.New(5*time.Minute, 5*time.Minute)
-
-const DontUnderstand = "don't understand"
-
 func NewSentence(locale, content string) (sentence Sentence) {
 	sentence = Sentence{
 		Locale:  locale,
@@ -611,20 +563,6 @@ func LogResults(locale, entry string, results []Result) {
 	}
 }
 
-var intents = map[string][]Intent{}
-
-type Intent struct {
-	Tag       string   `json:"tag"`
-	Patterns  []string `json:"patterns"`
-	Responses []string `json:"responses"`
-	Context   string   `json:"context"`
-}
-
-type Document struct {
-	Sentence Sentence
-	Tag      string
-}
-
 func CacheIntents(locale string, _intents []Intent) {
 	intents[locale] = _intents
 }
@@ -641,7 +579,7 @@ func GetResDir(dir string, file string, dir2 ...string) (filePath string) {
 	}
 	homeDir := usr.HomeDir
 
-	if (dir == "") {
+	if dir == "" {
 		return filepath.Join(homeDir, ".marboris", "res", file)
 	}
 
@@ -807,29 +745,6 @@ func (sentence Sentence) WordsBag(words []string) (bag []float64) {
 	return bag
 }
 
-var (
-	defaultModules  []Modulem
-	defaultIntents  []Intent
-	defaultMessages []Message
-)
-
-type LocaleCoverage struct {
-	Tag      string   `json:"locale_tag"`
-	Language string   `json:"language"`
-	Coverage Coverage `json:"coverage"`
-}
-
-type Coverage struct {
-	Modules  CoverageDetails `json:"modules"`
-	Intents  CoverageDetails `json:"intents"`
-	Messages CoverageDetails `json:"messages"`
-}
-
-type CoverageDetails struct {
-	NotCovered []string `json:"not_covered"`
-	Coverage   int      `json:"coverage"`
-}
-
 func GetCoverage(writer http.ResponseWriter, _ *http.Request) {
 	allowedHeaders := "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,Marboris-Token"
 	writer.Header().Set("Access-Control-Allow-Origin", "*")
@@ -921,18 +836,6 @@ func calculateCoverage(notCoveredLength, defaultLength int) int {
 	return 100 * (defaultLength - notCoveredLength) / defaultLength
 }
 
-var Locales = []Locale{
-	{
-		Tag:  "en",
-		Name: "english",
-	},
-}
-
-type Locale struct {
-	Tag  string
-	Name string
-}
-
 func GetNameByTag(tag string) string {
 	for _, locale := range Locales {
 		if locale.Tag != tag {
@@ -966,10 +869,6 @@ func Exists(tag string) bool {
 
 	return false
 }
-
-var fileName = getTempDir("Marboris-Authentication.txt")
-
-var authenticationHash []byte
 
 func GenerateToken() string {
 	b := make([]byte, 30)
@@ -1020,14 +919,6 @@ func Authenticate() {
 	SaveHash(string(hash))
 
 	authenticationHash = hash
-}
-
-type Error struct {
-	Message string `json:"message"`
-}
-
-type DeleteRequest struct {
-	Tag string `json:"tag"`
 }
 
 func WriteIntents(locale string, intents []Intent) {
@@ -1143,23 +1034,6 @@ func DeleteIntent(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(GetIntentsa(data["locale"]))
 }
 
-type Dashboard struct {
-	Layers   Layers   `json:"layers"`
-	Training Training `json:"training"`
-}
-
-type Layers struct {
-	InputNodes   int `json:"input"`
-	HiddenLayers int `json:"hidden"`
-	OutputNodes  int `json:"output"`
-}
-
-type Training struct {
-	Rate   float64   `json:"rate"`
-	Errors []float64 `json:"errors"`
-	Time   float64   `json:"time"`
-}
-
 func GetDashboardData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -1194,12 +1068,6 @@ func GetTraining(locale string) Training {
 	}
 }
 
-var (
-	neuralNetworks map[string]Network
-
-	cache = gocache.New(5*time.Minute, 5*time.Minute)
-)
-
 func Serve(_neuralNetworks map[string]Network, port string) {
 	neuralNetworks = _neuralNetworks // require
 
@@ -1220,26 +1088,6 @@ func Serve(_neuralNetworks map[string]Network, port string) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
-
-type RequestMessage struct {
-	Type        int         `json:"type"` // 0 for handshakes and 1 for messages
-	Content     string      `json:"content"`
-	Token       string      `json:"user_token"`
-	Locale      string      `json:"locale"`
-	Information Information `json:"information"`
-}
-
-type ResponseMessage struct {
-	Content     string      `json:"content"`
-	Tag         string      `json:"tag"`
-	Information Information `json:"information"`
 }
 
 func SocketHandle(w http.ResponseWriter, r *http.Request) {
@@ -1326,180 +1174,6 @@ func Reply(request RequestMessage) []byte {
 	return bytes
 }
 
-func init() {
-	RegisterModules("en", []Modulem{
-		{
-			Tag: AreaTag,
-			Patterns: []string{
-				"What is the area of ",
-				"Give me the area of ",
-			},
-			Responses: []string{
-				"The area of %s is %gkm²",
-			},
-			Replacer: AreaReplacer,
-		},
-
-		{
-			Tag: CapitalTag,
-			Patterns: []string{
-				"What is the capital of ",
-				"What's the capital of ",
-				"Give me the capital of ",
-			},
-			Responses: []string{
-				"The capital of %s is %s",
-			},
-			Replacer: CapitalReplacer,
-		},
-
-		{
-			Tag: CurrencyTag,
-			Patterns: []string{
-				"Which currency is used in ",
-				"Give me the used currency of ",
-				"Give me the currency of ",
-				"What is the currency of ",
-			},
-			Responses: []string{
-				"The currency of %s is %s",
-			},
-			Replacer: CurrencyReplacer,
-		},
-
-		{
-			Tag: MathTag,
-			Patterns: []string{
-				"Give me the result of ",
-				"Calculate ",
-			},
-			Responses: []string{
-				"The result is %s",
-				"That makes %s",
-			},
-			Replacer: MathReplacer,
-		},
-
-		{
-			Tag: GenresTag,
-			Patterns: []string{
-				"My favorite movie genres are Comedy, Horror",
-				"I like the Comedy, Horror genres",
-				"I like movies about War",
-				"I like Action movies",
-			},
-			Responses: []string{
-				"Great choices! I saved this movie genre information to your client.",
-				"Understood, I saved this movie genre information to your client.",
-			},
-			Replacer: GenresReplacer,
-		},
-
-		{
-			Tag: MoviesTag,
-			Patterns: []string{
-				"Find me a movie about",
-				"Give me a movie about",
-				"Find me a film about",
-			},
-			Responses: []string{
-				"I found the movie “%s” for you, which is rated %.02f/5",
-				"Sure, I found this movie “%s”, which is rated %.02f/5",
-			},
-			Replacer: MovieSearchReplacer,
-		},
-
-		{
-			Tag: MoviesAlreadyTag,
-			Patterns: []string{
-				"I already saw this movie",
-				"I have already watched this film",
-				"Oh I have already watched this movie",
-				"I have already seen this movie",
-			},
-			Responses: []string{
-				"Oh I see, here's another one “%s” which is rated %.02f/5",
-			},
-			Replacer: MovieSearchReplacer,
-		},
-
-		{
-			Tag: MoviesDataTag,
-			Patterns: []string{
-				"I'm bored",
-				"I don't know what to do",
-			},
-			Responses: []string{
-				"I propose you watch the %s movie “%s”, which is rated %.02f/5",
-			},
-			Replacer: MovieSearchFromInformationReplacer,
-		},
-
-		{
-			Tag: NameGetterTag,
-			Patterns: []string{
-				"Do you know my name?",
-			},
-			Responses: []string{
-				"Your name is %s!",
-			},
-			Replacer: NameGetterReplacer,
-		},
-
-		{
-			Tag: NameSetterTag,
-			Patterns: []string{
-				"My name is ",
-				"You can call me ",
-			},
-			Responses: []string{
-				"Great! Hi %s",
-			},
-			Replacer: NameSetterReplacer,
-		},
-
-		{
-			Tag: RandomTag,
-			Patterns: []string{
-				"Give me a random number",
-				"Generate a random number",
-			},
-			Responses: []string{
-				"The number is %s",
-			},
-			Replacer: RandomNumberReplacer,
-		},
-
-		{
-			Tag: JokesTag,
-			Patterns: []string{
-				"Tell me a joke",
-				"Make me laugh",
-			},
-			Responses: []string{
-				"Here you go, %s",
-				"Here's one, %s",
-			},
-			Replacer: JokesReplacer,
-		},
-		{
-			Tag: AdvicesTag,
-			Patterns: []string{
-				"Give me an advice",
-				"Advise me",
-			},
-			Responses: []string{
-				"Here you go, %s",
-				"Here's one, %s",
-				"Listen closely, %s",
-			},
-			Replacer: AdvicesReplacer,
-		},
-	})
-
-	ArticleCountriesm["en"] = ArticleCountries
-}
-
 func ArticleCountries(name string) string {
 	if name == "United States" {
 		return "the " + name
@@ -1507,16 +1181,6 @@ func ArticleCountries(name string) string {
 
 	return name
 }
-
-type Country struct {
-	Name     map[string]string `json:"name"`
-	Capital  string            `json:"capital"`
-	Code     string            `json:"code"`
-	Area     float64           `json:"area"`
-	Currency string            `json:"currency"`
-}
-
-var countries = SerializeCountries()
 
 func SerializeCountries() (countries []Country) {
 	err := json.Unmarshal(ReadFile(GetResDir("datasets", "countries.json")), &countries)
@@ -1544,22 +1208,6 @@ func FindCountry(locale, sentence string) Country {
 
 	return Country{}
 }
-
-type Movie struct {
-	Name   string
-	Genres []string
-	Rating float64
-}
-
-var (
-	MoviesGenres = map[string][]string{
-		"en": {
-			"Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama", "Fantasy",
-			"Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western",
-		},
-	}
-	movies = SerializeMovies()
-)
 
 func SerializeMovies() (movies []Movie) {
 	path := GetResDir("datasets", "movies.csv")
@@ -1620,15 +1268,6 @@ func FindMoviesGenres(locale, content string) (output []string) {
 	return
 }
 
-type Modules struct {
-	Action func(string, string)
-}
-
-var (
-	moduless []Modules
-	message  string
-)
-
 func GetMessage() string {
 	return message
 }
@@ -1640,10 +1279,6 @@ func ExecuteModules(token, locale string) {
 		module.Action(token, locale)
 	}
 }
-
-const adviceURL = "https://api.adviceslip.com/advice"
-
-var AdvicesTag = "advices"
 
 func AdvicesReplacer(locale, entry, response, _ string) (string, string) {
 	resp, err := http.Get(adviceURL)
@@ -1667,8 +1302,6 @@ func AdvicesReplacer(locale, entry, response, _ string) (string, string) {
 	return AdvicesTag, fmt.Sprintf(response, advice)
 }
 
-var AreaTag = "area"
-
 func AreaReplacer(locale, entry, response, _ string) (string, string) {
 	country := FindCountry(locale, entry)
 
@@ -1679,12 +1312,6 @@ func AreaReplacer(locale, entry, response, _ string) (string, string) {
 
 	return AreaTag, fmt.Sprintf(response, ArticleCountriesm[locale](country.Name[locale]), country.Area)
 }
-
-var (
-	CapitalTag = "capital"
-
-	ArticleCountriesm = map[string]func(string) string{}
-)
 
 func CapitalReplacer(locale, entry, response, _ string) (string, string) {
 	country := FindCountry(locale, entry)
@@ -1703,8 +1330,6 @@ func CapitalReplacer(locale, entry, response, _ string) (string, string) {
 	return CapitalTag, fmt.Sprintf(response, countryName, country.Capital)
 }
 
-var CurrencyTag = "currency"
-
 func CurrencyReplacer(locale, entry, response, _ string) (string, string) {
 	country := FindCountry(locale, entry)
 
@@ -1714,17 +1339,6 @@ func CurrencyReplacer(locale, entry, response, _ string) (string, string) {
 	}
 
 	return CurrencyTag, fmt.Sprintf(response, ArticleCountriesm[locale](country.Name[locale]), country.Currency)
-}
-
-const jokeURL = "https://official-joke-api.appspot.com/random_joke"
-
-var JokesTag = "jokes"
-
-type Joke struct {
-	ID        int64  `json:"id"`
-	Type      string `json:"type"`
-	Setup     string `json:"setup"`
-	Punchline string `json:"punchline"`
 }
 
 func JokesReplacer(locale, entry, response, _ string) (string, string) {
@@ -1755,8 +1369,6 @@ func JokesReplacer(locale, entry, response, _ string) (string, string) {
 	return JokesTag, fmt.Sprintf(response, jokeStr)
 }
 
-var MathTag = "math"
-
 func MathReplacer(locale, entry, response, _ string) (string, string) {
 	operation := FindMathOperation(entry)
 
@@ -1783,16 +1395,6 @@ func MathReplacer(locale, entry, response, _ string) (string, string) {
 
 	return MathTag, fmt.Sprintf(response, result)
 }
-
-type Modulem struct {
-	Tag       string
-	Patterns  []string
-	Responses []string
-	Replacer  func(string, string, string, string) (string, string)
-	Context   string
-}
-
-var modulesm = map[string][]Modulem{}
 
 func RegisterModules(locale string, _modules []Modulem) {
 	modulesm[locale] = append(modulesm[locale], _modules...)
@@ -1825,16 +1427,6 @@ func ReplaceContent(locale, tag, entry, response, token string) (string, string)
 
 	return tag, response
 }
-
-var (
-	GenresTag = "movies genres"
-
-	MoviesTag = "movies search"
-
-	MoviesAlreadyTag = "already seen movie"
-
-	MoviesDataTag = "movies search from data"
-)
 
 func GenresReplacer(locale, entry, response, token string) (string, string) {
 	genres := FindMoviesGenres(locale, entry)
@@ -1884,12 +1476,6 @@ func MovieSearchFromInformationReplacer(locale, _, response, token string) (stri
 	return MoviesDataTag, fmt.Sprintf(response, genresJoined, movie.Name, movie.Rating)
 }
 
-var (
-	NameGetterTag = "name getter"
-
-	NameSetterTag = "name setter"
-)
-
 func NameGetterReplacer(locale, _, response, token string) (string, string) {
 	name := GetUserInformation(token).Name
 
@@ -1919,8 +1505,6 @@ func NameSetterReplacer(locale, entry, response, token string) (string, string) 
 	return NameSetterTag, fmt.Sprintf(response, name)
 }
 
-var RandomTag = "random number"
-
 func RandomNumberReplacer(locale, entry, response, _ string) (string, string) {
 	limitArr, err := FindRangeLimits(locale, entry)
 	if err != nil {
@@ -1938,73 +1522,8 @@ func RandomNumberReplacer(locale, entry, response, _ string) (string, string) {
 	return RandomTag, fmt.Sprintf(response, strconv.Itoa(randNum))
 }
 
-var PatternTranslation = map[string]PatternTranslations{
-	"en": {
-		DateRegex: `(of )?(the )?((after )?tomorrow|((today|tonight)|(next )?(monday|tuesday|wednesday|thursday|friday|saturday|sunday))|(\d{2}|\d)(th|rd|st|nd)? (of )?(january|february|march|april|may|june|july|august|september|october|november|december)|((\d{2}|\d)/(\d{2}|\d)))`,
-		TimeRegex: `(at )?(\d{2}|\d)(:\d{2}|\d)?( )?(pm|am|p\.m|a\.m)`,
-	},
-}
-
-type PatternTranslations struct {
-	DateRegex string
-	TimeRegex string
-}
-
-type Rule func(string, string) time.Time
-
-var rules []Rule
-
 func RegisterRule(rule Rule) {
 	rules = append(rules, rule)
-}
-
-const day = time.Hour * 24
-
-var RuleTranslations = map[string]RuleTranslation{
-	"en": {
-		DaysOfWeek: []string{
-			"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
-		},
-		Months: []string{
-			"january", "february", "march", "april", "may", "june", "july",
-			"august", "september", "october", "november", "december",
-		},
-		RuleToday:         `today|tonight`,
-		RuleTomorrow:      `(after )?tomorrow`,
-		RuleAfterTomorrow: "after",
-		RuleDayOfWeek:     `(next )?(monday|tuesday|wednesday|thursday|friday|saturday|sunday)`,
-		RuleNextDayOfWeek: "next",
-		RuleNaturalDate:   `january|february|march|april|may|june|july|august|september|october|november|december`,
-	},
-}
-
-type RuleTranslation struct {
-	DaysOfWeek        []string
-	Months            []string
-	RuleToday         string
-	RuleTomorrow      string
-	RuleAfterTomorrow string
-	RuleDayOfWeek     string
-	RuleNextDayOfWeek string
-	RuleNaturalDate   string
-}
-
-var daysOfWeek = map[string]time.Weekday{
-	"monday":    time.Monday,
-	"tuesday":   time.Tuesday,
-	"wednesday": time.Wednesday,
-	"thursday":  time.Thursday,
-	"friday":    time.Friday,
-	"saturday":  time.Saturday,
-	"sunday":    time.Sunday,
-}
-
-func init() {
-	RegisterRule(RuleToday)
-	RegisterRule(RuleTomorrow)
-	RegisterRule(RuleDayOfWeek)
-	RegisterRule(RuleNaturalDate)
-	RegisterRule(RuleDate)
 }
 
 func RuleToday(locale, sentence string) (result time.Time) {
@@ -2171,10 +1690,6 @@ func LevenshteinContains(sentence, matching string, rate int) bool {
 	return false
 }
 
-var MathDecimals = map[string]string{
-	"en": `(\d+( |-)decimal(s)?)|(number (of )?decimal(s)? (is )?\d+)`,
-}
-
 func FindMathOperation(entry string) string {
 	mathRegex := regexp.MustCompile(
 		`((\()?(((\d+|pi)(\^\d+|!|.)?)|sqrt|cos|sin|tan|acos|asin|atan|log|ln|abs)( )?[+*\/\-x]?( )?(\))?[+*\/\-]?)+`,
@@ -2198,10 +1713,8 @@ func FindNumberOfDecimals(locale, entry string) int {
 	return decimalsInt
 }
 
-var names = SerializeNames()
-
 func SerializeNames() (names []string) {
-	namesFile := string(ReadFile(GetResDir("datasets" ,"names.txt")))
+	namesFile := string(ReadFile(GetResDir("datasets", "names.txt")))
 
 	names = append(names, strings.Split(strings.TrimSuffix(namesFile, "\n"), "\n")...)
 	return
@@ -2218,8 +1731,6 @@ func FindName(sentence string) string {
 
 	return ""
 }
-
-var decimal = "\\b\\d+([\\.,]\\d+)?"
 
 func FindRangeLimits(local, entry string) ([]int, error) {
 	decimalsRegex := regexp.MustCompile(decimal)
