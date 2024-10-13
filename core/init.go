@@ -1,6 +1,5 @@
 package core
 
-
 func init() {
 	RegisterRule(RuleToday)
 	RegisterRule(RuleTomorrow)
