@@ -1,14 +1,6 @@
 package core
 
 func init() {
-	RegisterRule(RuleToday)
-	RegisterRule(RuleTomorrow)
-	RegisterRule(RuleDayOfWeek)
-	RegisterRule(RuleNaturalDate)
-	RegisterRule(RuleDate)
-}
-
-func init() {
 	RegisterModules("en", []Modulem{
 		{
 			Tag: AreaTag,
