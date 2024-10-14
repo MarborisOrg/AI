@@ -2,6 +2,7 @@ package core
 
 import (
 	"bufio"
+	crand "crypto/rand"
 	"encoding/csv"
 	"encoding/json"
 	"errors"
@@ -519,7 +520,7 @@ func RandomizeResponse(locale, entry, tag, token string) (string, string) {
 
 		response := intent.Responses[0]
 		if len(intent.Responses) > 1 {
-			rand.Seed(time.Now().UnixNano())
+			rand.New(rand.NewSource(time.Now().UnixNano()))
 			response = intent.Responses[rand.Intn(len(intent.Responses))]
 		}
 
@@ -872,7 +873,7 @@ func Exists(tag string) bool {
 
 func GenerateToken() string {
 	b := make([]byte, 30)
-	rand.Read(b)
+	crand.Read(b)
 
 	fmt.Println("hey")
 	return fmt.Sprintf("%x", b)
